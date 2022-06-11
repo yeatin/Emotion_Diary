@@ -1,4 +1,5 @@
 import Login from './routes/Login';
+import View from './routes/View';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import './App.css';
@@ -12,6 +13,7 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login password={password} setPassword={setPassword} />} />
+        <Route path="/view" element={<View />} />
       </Routes>
     </BrowserRouter>
   );
