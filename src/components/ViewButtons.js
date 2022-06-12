@@ -5,7 +5,7 @@ import Form from "react-bootstrap/Form";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import { useNavigate } from "react-router-dom";
 
-const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime }) => {
+const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime, setViewMode, setTimeRange }) => {
     const navigate = useNavigate();
 
     const toggleWindow = (id) => {
@@ -52,7 +52,15 @@ const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime }) => {
 
     const handleWindow = (event) => {
         if (event.key === "Enter") {
-            console.log("startTime=", startTime, "endTime=", endTime);
+            let temp = ["", ""];
+            for(let item in startTime){
+                temp[0] += startTime[item];
+            }
+            for(let item in endTime){
+                temp[1] += endTime[item];
+            }
+            setTimeRange(temp);
+            setViewMode("time");
             toggleWindow("switchToTime");
         }
         else{
@@ -81,7 +89,7 @@ const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime }) => {
                     <div style={{ backgroundColor: "#1F66AB", width: "3px", height: "2rem", position: "absolute", top: "-2rem", left: "35%" }}></div>
                     <Stack style={{ backgroundColor: "#B9D8F5", border: "2px solid #1F66AB", padding: "1rem", width: "80%" }}>
                         <Stack direction="horizontal" gap={2} >
-                            <p style={{ margin: "0", fontSize: "1.3rem" }}>開始時間 :</p>
+                            <p style={{ margin: "0", fontSize: "1.3rem", width: "10rem" }}>開始時間：</p>
                             <Form.Group controlId="startYear">
                                 <Form.Control placeholder="YYYY" onKeyDown={handleWindow} />
                             </Form.Group>
@@ -95,7 +103,7 @@ const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime }) => {
                             </Form.Group>
                         </Stack>
                         <Stack direction="horizontal" gap={2} style={{ marginTop: "1rem" }}>
-                            <p style={{ margin: "0", fontSize: "1.3rem" }}>結束時間 :</p>
+                            <p style={{ margin: "0", fontSize: "1.3rem", width: "10rem" }}>結束時間：</p>
                             <Form.Group controlId="endYear">
                                 <Form.Control placeholder="YYYY" onKeyDown={handleWindow} />
                             </Form.Group>
