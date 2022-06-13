@@ -3,9 +3,9 @@ import Stack from "react-bootstrap/Stack";
 import Form from "react-bootstrap/Form";
 
 const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosenData }) => {
-
     const handleContent = (data) => {
         const contentContainer = document.querySelector(".contentContainer");
+        const closeContent = document.querySelector(".closeContent");
 
         const contentTime0 = document.querySelector(".contentTime0");
         const contentTime1 = document.querySelector(".contentTime1");
@@ -21,6 +21,7 @@ const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosen
         const contentMood = document.querySelector(".contentMood");
         const contentStartTime = document.querySelector(".contentStartTime");
         const contentEndTime = document.querySelector(".contentEndTime");
+        closeContent.addEventListener("click", () => contentContainer.style.display = "none");
         contentTime0.value = data.yearMonthDay.slice(0, 4)
         contentTime1.value = data.yearMonthDay.slice(4, 6)
         contentTime2.value = data.yearMonthDay.slice(6, 8)
@@ -35,7 +36,7 @@ const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosen
         contentMood.value = data.mood;
         contentStartTime.value = data.startTime;
         contentEndTime.value = data.endTime;
-        contentContainer.style.display="block";
+        contentContainer.style.display = "block";
     }
 
     return (
@@ -53,9 +54,11 @@ const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosen
                     {datas.map((data, index) => {
                         if (viewMode === "time") {
                             return timeRange[0] <= data.yearMonthDay && data.yearMonthDay <= timeRange[1] ? (
-                                <tr id={`row${index}`}
+                                <tr
+                                    key={`row${index}`}
+                                    id={`row${index}`}
                                     style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
-                                    onClick={handleContent}>
+                                    onClick={handleContent(data)}>
                                     <td>{data.eventName}</td>
                                     <td>{data.yearMonthDay}</td>
                                     <td>{data.locationId}</td>
@@ -65,7 +68,10 @@ const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosen
                         }
                         else {
                             return (
-                                <tr id={index} style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
+                                <tr
+                                    key={index}
+                                    id={index}
+                                    style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
                                     onClick={() => handleContent(data)}>
                                     <td>{data.eventName}</td>
                                     <td>{data.yearMonthDay}</td>
@@ -76,7 +82,12 @@ const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosen
                     })}
                 </tbody>
             </Table>
-            <div className="contentContainer" style={{ position: "absolute", top: "3rem", left: "15rem", padding: "2rem 4rem", backgroundColor: "#A9BDDD", border: "solid 2px #5271A1", display: "none" }}>
+            <div className="contentContainer"
+                style={{ position: "absolute", top: "3rem", left: "15rem", padding: "2rem 4rem", backgroundColor: "#A9BDDD", border: "solid 2px #5271A1", display: "none" }}
+            >
+                <p
+                    className="closeContent"
+                    style={{ position: "absolute", top: "0.5rem", right: "1rem", cursor: "pointer", fontSize: "1.5rem" }}>X</p>
                 <Form>
                     <fieldset disabled>
                         <Stack>

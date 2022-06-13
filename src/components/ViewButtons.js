@@ -1,19 +1,25 @@
 import Stack from "react-bootstrap/Stack";
 import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
 import Alert from "react-bootstrap/Alert";
 import Form from "react-bootstrap/Form";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
 import { useNavigate } from "react-router-dom";
 
-const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime, setViewMode, setTimeRange }) => {
+const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime, setViewMode, setTimeRange, datas }) => {
     const navigate = useNavigate();
 
     const toggleWindow = (id) => {
         const smallWindow = document.querySelector(`#${id}`);
-        if (smallWindow.style.display === "none")
+        if (smallWindow.style.display === "none") {
             smallWindow.style.display = "block";
-        else
+            smallWindow.style.zIndex = "2";
+        }
+        else {
             smallWindow.style.display = "none";
+            smallWindow.style.zIndex = "-1";
+        }
     }
 
     const handleButton = (type) => {
@@ -47,26 +53,35 @@ const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime, setViewMode
             case "endDay":
                 setEndTime({ ...endTime, endDay: event.target.value });
                 break;
+            default:
+                break;
         }
     }
 
     const handleWindow = (event) => {
         if (event.key === "Enter") {
             let temp = ["", ""];
-            for(let item in startTime){
+            for (let item in startTime) {
                 temp[0] += startTime[item];
             }
-            for(let item in endTime){
+            for (let item in endTime) {
                 temp[1] += endTime[item];
             }
             setTimeRange(temp);
             setViewMode("time");
             toggleWindow("switchToTime");
         }
-        else{
+        else {
             handleWindowChange(event);
         }
     }
+
+    const uniqueArray = [];
+    datas.forEach(item => {
+        if (!uniqueArray[item.typeId]) {
+            uniqueArray[item.typeId] = 1;
+        }
+    })
 
     return (
         <div>
@@ -81,13 +96,16 @@ const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime, setViewMode
                         onClick={() => handleButton("switchToTime")}
                     >時間段事件瀏覽
                     </Button>
-                    <Button variant="outline-secondary" style={{ height: "5rem", fontSize: "1.4rem" }}>同類型事件瀏覽</Button>
+                    <Button variant="outline-secondary"
+                        style={{ height: "5rem", fontSize: "1.4rem" }}
+                        onClick={() => handleButton("switchToType")}
+                    >同類型事件瀏覽</Button>
                     <Button variant="outline-secondary" style={{ height: "5rem", fontSize: "1.4rem" }}>時間段事件花費統計</Button>
                     <Button variant="outline-secondary" style={{ height: "5rem", fontSize: "1.4rem" }}>同類型事件花費統計</Button>
                 </ButtonGroup>
-                <div id="switchToTime" style={{ width: "50rem", position: "absolute", top: "7rem", "left": "0", display: "none" }}>
+                <div id="switchToTime" style={{ width: "40rem", margin: "0", position: "absolute", top: "7rem", "left": "5rem", display: "none" }}>
                     <div style={{ backgroundColor: "#1F66AB", width: "3px", height: "2rem", position: "absolute", top: "-2rem", left: "35%" }}></div>
-                    <Stack style={{ backgroundColor: "#B9D8F5", border: "2px solid #1F66AB", padding: "1rem", width: "80%" }}>
+                    <Stack style={{ backgroundColor: "#B9D8F5", border: "2px solid #1F66AB", padding: "1rem" }}>
                         <Stack direction="horizontal" gap={2} >
                             <p style={{ margin: "0", fontSize: "1.3rem", width: "10rem" }}>開始時間：</p>
                             <Form.Group controlId="startYear">
@@ -116,6 +134,24 @@ const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime, setViewMode
                                 <Form.Control placeholder="YYYY" onKeyDown={handleWindow} />
                             </Form.Group>
                         </Stack>
+                    </Stack>
+                </div>
+                <div id="switchToType" style={{ width: "40rem", position: "absolute", top: "7rem", "left": "20rem", display: "none" }}>
+                    <div style={{ backgroundColor: "#1F66AB", width: "3px", height: "2rem", position: "absolute", top: "-2rem", left: "35%" }}></div>
+                    <Stack style={{ backgroundColor: "#B9D8F5", border: "2px solid #1F66AB", padding: "1rem" }}>
+                        <p style={{ margin: "0", fontSize: "1.3rem", width: "10rem" }}>事件種類代號：</p>
+                        <DropdownButton
+                            variant="primary"
+                            title="Dropdown"
+                            id="input-group-dropdown-1">
+                            {
+                                uniqueArray.map((item, index) => {
+                                    if (item) {
+                                        return <Dropdown.Item >{index}</Dropdown.Item>
+                                    }
+                                })
+                            }
+                        </DropdownButton>
                     </Stack>
                 </div>
             </div>

@@ -70,7 +70,7 @@ const ViewContainer = () => {
 
     return (
         <div>
-            <ViewButtons startTime={startTime} setStartTime={setStartTime} endTime={endTime} setEndTime={setEndTime} setViewMode={setViewMode} setTimeRange={setTimeRange} />
+            <ViewButtons startTime={startTime} setStartTime={setStartTime} endTime={endTime} setEndTime={setEndTime} setViewMode={setViewMode} setTimeRange={setTimeRange} datas={datas} />
             <ViewTable datas={datas} setDatas={setDatas} startTime={startTime} endTime={endTime} viewMode={viewMode} timeRange={timeRange} chosenData={chosenData} setChosenData={setChosenData} />
         </div>
     )
