@@ -2,7 +2,18 @@ import Table from 'react-bootstrap/Table';
 import Stack from "react-bootstrap/Stack";
 import Form from "react-bootstrap/Form";
 
-const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosenData }) => {
+const EditTable = ({ datas, chosenData, setChosenData }) => {
+
+    const handleSelect = (id) => {
+        const allCircles = document.querySelectorAll(".circle");
+        allCircles.forEach(circle => {
+            circle.style.backgroundColor = "transparent";
+            circle.style.borderColor = "#000";
+        })
+        const selectedCircle = document.querySelector(`#${id}`);
+        selectedCircle.style.backgroundColor = "#BD3E5C";
+        selectedCircle.style.borderColor = "#BD3E5C";
+    }
 
     const handleContent = (data) => {
         const contentContainer = document.querySelector(".contentContainer");
@@ -46,40 +57,35 @@ const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosen
                 style={{ margin: "5rem auto 0 auto", width: "90%", backgroundColor: "#B9D8F5" }}>
                 <thead style={{ backgroundColor: "#1F66AB", color: "#fff", borderBottom: "solid 3px #fff" }}>
                     <tr style={{ fontSize: "1.5rem" }}>
+                        <th>選取</th>
                         <th>活動名稱（Event_name）</th>
                         <th>年_月_日（Year_Month_Day）</th>
                         <th>地點代號（Location_id）</th>
+                        <th>修改內容</th>
                     </tr>
                 </thead>
                 <tbody>
                     {datas.map((data, index) => {
-                        if (viewMode === "time") {
-                            return timeRange[0] <= data.yearMonthDay && data.yearMonthDay <= timeRange[1] ? (
-                                <tr
-                                    key={`row${index}`}
-                                    id={`row${index}`}
-                                    style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
-                                    onClick={handleContent(data)}>
-                                    <td>{data.eventName}</td>
-                                    <td>{data.yearMonthDay}</td>
-                                    <td>{data.locationId}</td>
-                                </tr>
-                            )
-                                : null;
-                        }
-                        else {
-                            return (
-                                <tr
-                                    key={index}
-                                    id={index}
-                                    style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
-                                    onClick={() => handleContent(data)}>
-                                    <td>{data.eventName}</td>
-                                    <td>{data.yearMonthDay}</td>
-                                    <td>{data.locationId}</td>
-                                </tr>
-                            )
-                        }
+                        return (
+                            <tr
+                                key={index}
+                                id={`editRow${index}`}
+                                style={{ fontSize: "1.4rem", fontWeight: "900" }}
+                            >
+                                <td
+                                    style={{ padding: "0" }}
+                                    onClick={() => handleSelect(`circle${index}`)}>
+                                    <div id={`circle${index}`}
+                                        className="circle"
+                                        style={{ border: "solid 3px #000", borderRadius: "50%", width: "1.5rem", height: "1.5rem", margin: "0.7rem auto" }}>
+                                    </div>
+                                </td>
+                                <td>{data.eventName}</td>
+                                <td>{data.yearMonthDay}</td>
+                                <td>{data.locationId}</td>
+                                <td style={{ textAlign: "center" }}><a onClick={() => handleContent(data)} style={{ textDecoration: "underline", cursor: "pointer" }}>修改</a></td>
+                            </tr>
+                        )
                     })}
                 </tbody>
             </Table>
@@ -166,4 +172,4 @@ const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosen
     )
 }
 
-export default ViewTable;
+export default EditTable;

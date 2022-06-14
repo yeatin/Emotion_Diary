@@ -90,7 +90,11 @@ const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime, setViewMode
             </div>
             <div style={{ margin: "5rem auto 0 auto", width: "90%", position: "relative" }}>
                 <ButtonGroup style={{ width: "70rem", margin: "0 auto" }}>
-                    <Button variant="outline-secondary" style={{ height: "5rem", fontSize: "1.4rem" }}>切換至編輯介面</Button>
+                    <Button variant="outline-secondary"
+                        style={{ height: "5rem", fontSize: "1.4rem" }}
+                        onClick={() => handleButton("edit")}
+                    >切換至編輯介面
+                    </Button>
                     <Button variant="outline-secondary"
                         style={{ height: "5rem", fontSize: "1.4rem" }}
                         onClick={() => handleButton("switchToTime")}
