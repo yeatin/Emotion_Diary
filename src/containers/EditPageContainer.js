@@ -3,8 +3,6 @@ import EditButtons from "../components/EditButtons";
 import EditTable from "../components/EditTable";
 
 const EditPageContainer = () => {
-    const [viewMode, setViewMode] = useState("normal");
-
     const initialDatas = [
         {
             eventName: "Apple",
@@ -63,13 +61,63 @@ const EditPageContainer = () => {
             building: ""
         }
     ];
+    const initialLocations = [
+        {
+            locationId: 0,
+            country: "Taiwan",
+            city: "Taipei",
+            street: "BackStreet",
+            building: ""
+        },
+        {
+            locationId: 1,
+            country: "Taiwan",
+            city: "Taipei",
+            street: "BackStreet",
+            building: ""
+        },
+        {
+            locationId: 2,
+            country: "Taiwan",
+            city: "Taipei",
+            street: "BackStreet",
+            building: ""
+        },
+        {
+            locationId: 3,
+            country: "Taiwan",
+            city: "Taipei",
+            street: "BackStreet",
+            building: ""
+        }
+    ]
+    const initialTypes = [{
+        typeId: 0,
+        typeName: "emergency"
+    },
+    {
+        typeId: 1,
+        typeName: "school"
+    },
+    {
+        typeId: 2,
+        typeName: "work"
+    },
+    {
+        typeId: 3,
+        typeName: "food"
+    }]
+    const [viewMode, setViewMode] = useState("normal");
     const [datas, setDatas] = useState(initialDatas);
     const [chosenData, setChosenData] = useState({});
+    const [locations, setLocations] = useState(initialLocations);
+    const [types, setTypes] = useState(initialTypes);
+    const [locationMax, setLocationMax] = useState(-1);
 
     return (
         <div>
-            <EditButtons datas={datas} />
-            <EditTable datas={datas} setDatas={setDatas} chosenData={chosenData} setChosenData={setChosenData} />
+            <EditButtons datas={datas} chosenData={chosenData} />
+            <EditTable datas={datas} setDatas={setDatas} chosenData={chosenData} setChosenData={setChosenData} locations={locations} setLocations={setLocations} types={types} setTypes={setTypes} locationMax={locationMax} setLocationMax={setLocationMax} />
         </div>
     )
 }

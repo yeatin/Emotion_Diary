@@ -13,7 +13,7 @@ const LoginPage = ({ password, setPassword }) => {
     }
 
     const handleEnter = (event) => {
-        if (event.key = "Enter") {
+        if (event.key === "Enter") {
             verifyPassword();
         }
     }
@@ -22,7 +22,9 @@ const LoginPage = ({ password, setPassword }) => {
         const loginFail = document.querySelector(".loginFail");
         loginFail.style.display = "none";
         if (password === "mock") {
+            document.cookie = "verified=true;";
             navigate("/view");
+            window.location.reload();
         }
         else {
             loginFail.style.display = "block";

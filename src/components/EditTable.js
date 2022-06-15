@@ -1,23 +1,30 @@
 import Table from 'react-bootstrap/Table';
 import Stack from "react-bootstrap/Stack";
 import Form from "react-bootstrap/Form";
+import Button from 'react-bootstrap/Button';
 
-const EditTable = ({ datas, chosenData, setChosenData }) => {
+const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setLocations, types, setTypes, locationMax, setLocationMax }) => {
 
-    const handleSelect = (id) => {
+    const handleSelect = (id, data) => {
+        const selectedCircle = document.querySelector(`#${id}`);
+        if (data === chosenData) {
+            setChosenData({});
+            selectedCircle.style.backgroundColor = "transparent";
+            selectedCircle.style.borderColor = "#000";
+            return;
+        }
         const allCircles = document.querySelectorAll(".circle");
         allCircles.forEach(circle => {
             circle.style.backgroundColor = "transparent";
             circle.style.borderColor = "#000";
         })
-        const selectedCircle = document.querySelector(`#${id}`);
         selectedCircle.style.backgroundColor = "#BD3E5C";
         selectedCircle.style.borderColor = "#BD3E5C";
+        setChosenData(data);
     }
 
     const handleContent = (data) => {
         const contentContainer = document.querySelector(".contentContainer");
-        const closeContent = document.querySelector(".closeContent");
 
         const contentTime0 = document.querySelector(".contentTime0");
         const contentTime1 = document.querySelector(".contentTime1");
@@ -33,7 +40,6 @@ const EditTable = ({ datas, chosenData, setChosenData }) => {
         const contentMood = document.querySelector(".contentMood");
         const contentStartTime = document.querySelector(".contentStartTime");
         const contentEndTime = document.querySelector(".contentEndTime");
-        closeContent.addEventListener("click", () => contentContainer.style.display = "none");
         contentTime0.value = data.yearMonthDay.slice(0, 4)
         contentTime1.value = data.yearMonthDay.slice(4, 6)
         contentTime2.value = data.yearMonthDay.slice(6, 8)
@@ -48,7 +54,75 @@ const EditTable = ({ datas, chosenData, setChosenData }) => {
         contentMood.value = data.mood;
         contentStartTime.value = data.startTime;
         contentEndTime.value = data.endTime;
+        contentCountry.disabled = false;
+        contentCity.disabled = false;
+        contentStreet.disabled = false;
+        contentBuilding.disabled = false;
         contentContainer.style.display = "block";
+    }
+
+    const handleLocation = (event) => {
+        const contentCountry = document.querySelector(".contentCountry");
+        const contentCity = document.querySelector(".contentCity");
+        const contentStreet = document.querySelector(".contentStreet");
+        const contentBuilding = document.querySelector(".contentBuilding");
+        const value = event.target.value;
+        console.log("value", value);
+        if (value === "新增") {
+            contentCountry.value = "";
+            contentCity.value = "";
+            contentStreet.value = "";
+            contentBuilding.value = "";
+            contentCountry.disabled = false;
+            contentCity.disabled = false;
+            contentStreet.disabled = false;
+            contentBuilding.disabled = false;
+            let max = -1;
+            locations.forEach((location) => max = location.locationId > max ? location.locationId : max);
+            if (max >= 0) {
+                setLocationMax(max);
+            }
+        }
+        else {
+            locations.forEach((location) => {
+                if (location.locationId == value) {
+                    contentCountry.value = location.country;
+                    contentCity.value = location.city;
+                    contentStreet.value = location.street;
+                    contentBuilding.value = location.building;
+                    contentCountry.disabled = true;
+                    contentCity.disabled = true;
+                    contentStreet.disabled = true;
+                    contentBuilding.disabled = true;
+                    return;
+                }
+            })
+            setLocationMax(-1);
+        }
+    }
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        const addContent = document.forms['addContent'];
+        const contentContainer = document.querySelector(".contentContainer");
+        const elements = addContent.elements;
+        const newData = {
+            eventName: elements.eventName,
+            typeId: parseInt(elements.typeId),
+            yearMonthDay: elements.time0 + elements.time1 + elements.time2,
+            startTime: elements.startTime,
+            endTime: elements.endTime,
+            locationId: elements.typeId,
+            cost: parseInt(elements.cost),
+            mood: elements.mood,
+            country: elements.country,
+            city: elements.city,
+            street: elements.street,
+            building: elements.building
+        };
+        //send to db
+        //setDatas();
+        contentContainer.style.display = "none";
     }
 
     return (
@@ -74,7 +148,7 @@ const EditTable = ({ datas, chosenData, setChosenData }) => {
                             >
                                 <td
                                     style={{ padding: "0" }}
-                                    onClick={() => handleSelect(`circle${index}`)}>
+                                    onClick={() => handleSelect(`circle${index}`, data)}>
                                     <div id={`circle${index}`}
                                         className="circle"
                                         style={{ border: "solid 3px #000", borderRadius: "50%", width: "1.5rem", height: "1.5rem", margin: "0.7rem auto" }}>
@@ -83,87 +157,141 @@ const EditTable = ({ datas, chosenData, setChosenData }) => {
                                 <td>{data.eventName}</td>
                                 <td>{data.yearMonthDay}</td>
                                 <td>{data.locationId}</td>
-                                <td style={{ textAlign: "center" }}><a onClick={() => handleContent(data)} style={{ textDecoration: "underline", cursor: "pointer" }}>修改</a></td>
+                                <td style={{ textAlign: "center" }}>
+                                    <a
+                                        onClick={() => handleContent(data)}
+                                        style={{ textDecoration: "underline", cursor: "pointer" }}
+                                    >修改
+                                    </a>
+                                </td>
                             </tr>
                         )
                     })}
                 </tbody>
             </Table>
-            <div className="contentContainer"
+            <div className="contentContainer" id="contentContainer"
                 style={{ position: "absolute", top: "3rem", left: "15rem", padding: "2rem 4rem", backgroundColor: "#A9BDDD", border: "solid 2px #5271A1", display: "none" }}
             >
                 <p
                     className="closeContent"
-                    style={{ position: "absolute", top: "0.5rem", right: "1rem", cursor: "pointer", fontSize: "1.5rem" }}>X</p>
-                <Form>
-                    <fieldset disabled>
+                    style={{ position: "absolute", top: "0.5rem", right: "1rem", cursor: "pointer", fontSize: "1.5rem" }}
+                    onClick={() => {
+                        const contentContainer = document.querySelector(".contentContainer");
+                        contentContainer.style.display = "none";
+                    }}
+                >X
+                </p>
+                <Form name="addContent">
+                    <fieldset>
                         <Stack>
                             <Stack direction="horizontal" gap={2}>
                                 <p style={{ margin: "0", fontSize: "1.3rem" }}>時間：</p>
                                 <Form.Group>
-                                    <Form.Control className="contentTime0" />
+                                    <Form.Control placeholder="YYYY" name="time0" className="contentTime0" />
                                 </Form.Group>
                                 <p style={{ fontSize: "1.5rem", margin: "0" }}>\</p>
                                 <Form.Group>
-                                    <Form.Control className="contentTime1" />
+                                    <Form.Control placeholder="MM" name="time1" className="contentTime1" />
                                 </Form.Group>
                                 <p style={{ fontSize: "1.5rem", margin: "0" }}>\</p>
                                 <Form.Group>
-                                    <Form.Control className="contentTime2" />
+                                    <Form.Control placeholder="DD" name="time2" className="contentTime2" />
                                 </Form.Group>
                             </Stack>
                             <Stack direction="horizontal" gap={2} style={{ marginTop: "1rem" }}>
-                                <p style={{ margin: "0", fontSize: "1.3rem" }}>地點：（地點編號</p>
-                                <Form.Control style={{ width: "5rem" }} className="contentLocationId"></Form.Control>
+                                <p style={{ margin: "0", fontSize: "1.3rem" }}>地點：（查詢已儲存的地點編號</p>
+                                <Form.Group>
+                                    <Form.Select
+                                        style={{ width: "5rem" }}
+                                        name="locationId"
+                                        className="contentLocationId"
+                                        onChange={handleLocation}
+                                    >
+                                        <option value="add">新增</option>
+                                        {
+                                            locations.map((location) => {
+                                                return <option value={location.locationId}>{location.locationId}</option>
+
+                                            })
+                                        }
+                                    </Form.Select>
+                                </Form.Group>
                                 <p style={{ margin: "0", fontSize: "1.3rem" }}>）</p>
+                                {
+                                    locationMax >= 0 ?
+                                        <Stack direction="horizontal" className="contentAddLocation">
+                                            <p style={{ margin: "0", fontSize: "1.3rem" }}>（新增地點編號：</p>
+                                            <p style={{ margin: "0", fontSize: "1.3rem", textDecoration: "underline" }}>{locationMax}</p>
+                                            <p style={{ margin: "0", fontSize: "1.3rem" }}>）</p>
+                                        </Stack>
+                                        : <></>
+                                }
                             </Stack>
                             <Stack direction="horizontal" gap={2} style={{ marginTop: "1rem" }}>
                                 <p style={{ margin: "0", fontSize: "1.3rem" }}>國家：</p>
                                 <Form.Group>
-                                    <Form.Control className="contentCountry" />
+                                    <Form.Control placeholder="Country" name="country" className="contentCountry" />
                                 </Form.Group>
                                 <p style={{ fontSize: "1.5rem", margin: "0 0 0 1rem" }}>城市：</p>
                                 <Form.Group>
-                                    <Form.Control className="contentCity" />
+                                    <Form.Control placeholder="City" name="city" className="contentCity" />
                                 </Form.Group>
                                 <p style={{ fontSize: "1.5rem", margin: "0 0 0 1rem" }}>街道：</p>
                                 <Form.Group>
-                                    <Form.Control className="contentStreet" />
+                                    <Form.Control placeholder="Street" name="street" className="contentStreet" />
                                 </Form.Group>
                             </Stack>
                             <Stack direction="horizontal" gap={2} style={{ marginTop: "1rem" }}>
                                 <p style={{ margin: "0", fontSize: "1.3rem", width: "7rem" }}>建築名稱：</p>
-                                <Form.Control style={{ width: "10rem", maxWidth: "100%" }} className="contentBuilding"></Form.Control>
+                                <Form.Control placeholder="Building" name="building" style={{ width: "10rem", maxWidth: "100%" }} className="contentBuilding"></Form.Control>
                             </Stack>
                             <p style={{ margin: "1rem 0 0 0", fontSize: "1.3rem" }}>事件：</p>
                             <Stack direction="horizontal" gap={2} style={{ marginTop: "1rem" }}>
                                 <p style={{ margin: "0", fontSize: "1.3rem" }}>事件名稱：</p>
                                 <Form.Group>
-                                    <Form.Control className="contentEventName" />
+                                    <Form.Control placeholder="Event_name" name="eventName" className="contentEventName" />
                                 </Form.Group>
                                 <p style={{ fontSize: "1.5rem", margin: "0 0 0 1rem" }}>事件種類代號：</p>
                                 <Form.Group>
-                                    <Form.Control className="contentTypeId" />
+                                    <Form.Select
+                                        style={{ width: "5rem" }}
+                                        name="typeId"
+                                        className="contentTypeId"
+                                    >
+                                        {
+                                            types.map((type) => {
+                                                return <option value={type.typeId}>{type.typeId}</option>
+
+                                            })
+                                        }
+                                    </Form.Select>
                                 </Form.Group>
                                 <p style={{ fontSize: "1.5rem", margin: "0 0 0 1rem" }}>花費：</p>
                                 <Form.Group>
-                                    <Form.Control className="contentCost" />
+                                    <Form.Control placeholder="Cost" name="cost" className="contentCost" />
                                 </Form.Group>
                             </Stack>
                             <Stack direction="horizontal" gap={2} style={{ marginTop: "1rem" }}>
                                 <p style={{ margin: "0", fontSize: "1.3rem" }}>事件心情：</p>
                                 <Form.Group>
-                                    <Form.Control className="contentMood" />
+                                    <Form.Control placeholder="Mood" name="mood" className="contentMood" />
                                 </Form.Group>
                                 <p style={{ fontSize: "1.5rem", margin: "0 0 0 1rem" }}>開始時間：</p>
                                 <Form.Group>
-                                    <Form.Control className="contentStartTime" />
+                                    <Form.Control placeholder="Start_time" name="startTime" className="contentStartTime" />
                                 </Form.Group>
                                 <p style={{ fontSize: "1.5rem", margin: "0 0 0 1rem" }}>結束時間：</p>
                                 <Form.Group>
-                                    <Form.Control className="contentEndTime" />
+                                    <Form.Control placeholder="End_time" name="endTime" className="contentEndTime" />
                                 </Form.Group>
                             </Stack>
+                            <Button
+                                type="submit"
+                                variant="primary"
+                                style={{ width: "5rem", margin: "1rem auto 0 auto" }}
+                                onClick={handleSubmit}
+                            >套用
+                            </Button>
                         </Stack>
                     </fieldset>
                 </Form>
