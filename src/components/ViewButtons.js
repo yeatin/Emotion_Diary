@@ -13,6 +13,11 @@ const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime, setViewMode
     const toggleWindow = (id) => {
         const smallWindow = document.querySelector(`#${id}`);
         if (smallWindow.style.display === "none") {
+            const smallWindows = document.querySelectorAll(".smallWindow");
+            smallWindows.forEach((smallWindow) => {
+                smallWindow.style.display = "none";
+                smallWindow.style.zIndex = "-1";
+            });
             smallWindow.style.display = "block";
             smallWindow.style.zIndex = "2";
         }
@@ -107,7 +112,7 @@ const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime, setViewMode
                     <Button variant="outline-secondary" style={{ height: "5rem", fontSize: "1.4rem" }}>時間段事件花費統計</Button>
                     <Button variant="outline-secondary" style={{ height: "5rem", fontSize: "1.4rem" }}>同類型事件花費統計</Button>
                 </ButtonGroup>
-                <div id="switchToTime" style={{ width: "40rem", margin: "0", position: "absolute", top: "7rem", "left": "5rem", display: "none" }}>
+                <div id="switchToTime" className="smallWindow" style={{ width: "40rem", margin: "0", position: "absolute", top: "7rem", "left": "5rem", display: "none" }}>
                     <div style={{ backgroundColor: "#1F66AB", width: "3px", height: "2rem", position: "absolute", top: "-2rem", left: "35%" }}></div>
                     <Stack style={{ backgroundColor: "#B9D8F5", border: "2px solid #1F66AB", padding: "1rem" }}>
                         <Stack direction="horizontal" gap={2} >
@@ -140,7 +145,7 @@ const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime, setViewMode
                         </Stack>
                     </Stack>
                 </div>
-                <div id="switchToType" style={{ width: "40rem", position: "absolute", top: "7rem", "left": "20rem", display: "none" }}>
+                <div id="switchToType" className="smallWindow" style={{ width: "40rem", position: "absolute", top: "7rem", "left": "20rem", display: "none" }}>
                     <div style={{ backgroundColor: "#1F66AB", width: "3px", height: "2rem", position: "absolute", top: "-2rem", left: "35%" }}></div>
                     <Stack style={{ backgroundColor: "#B9D8F5", border: "2px solid #1F66AB", padding: "1rem" }}>
                         <p style={{ margin: "0", fontSize: "1.3rem", width: "10rem" }}>事件種類代號：</p>

@@ -89,7 +89,7 @@ const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosen
                 <p
                     className="closeContent"
                     style={{ position: "absolute", top: "0.5rem", right: "1rem", cursor: "pointer", fontSize: "1.5rem" }}>X</p>
-                <Form>
+                <Form className="smallWindow">
                     <fieldset disabled>
                         <Stack>
                             <Stack direction="horizontal" gap={2}>

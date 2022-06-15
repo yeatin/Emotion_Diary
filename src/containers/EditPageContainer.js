@@ -116,7 +116,7 @@ const EditPageContainer = () => {
 
     return (
         <div>
-            <EditButtons datas={datas} chosenData={chosenData} />
+            <EditButtons datas={datas} chosenData={chosenData} types={types} />
             <EditTable datas={datas} setDatas={setDatas} chosenData={chosenData} setChosenData={setChosenData} locations={locations} setLocations={setLocations} types={types} setTypes={setTypes} locationMax={locationMax} setLocationMax={setLocationMax} />
         </div>
     )

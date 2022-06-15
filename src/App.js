@@ -1,7 +1,7 @@
 import Login from './routes/Login';
 import View from './routes/View';
 import Edit from './routes/Edit';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
 import './App.css';
 
@@ -10,7 +10,7 @@ const App = () => {
   const isVerified = document.cookie.split("=")[1];
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<Login password={password} setPassword={setPassword} />} />
         {
@@ -22,7 +22,7 @@ const App = () => {
             : <></>
         }
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

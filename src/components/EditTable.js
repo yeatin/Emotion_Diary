@@ -23,9 +23,24 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
         setChosenData(data);
     }
 
-    const handleContent = (data) => {
-        const contentContainer = document.querySelector(".contentContainer");
+    const toggleWindow = (id) => {
+        const smallWindow = document.querySelector(`#${id}`);
+        if (smallWindow.style.display === "none") {
+            const smallWindows = document.querySelectorAll(".smallWindow");
+            smallWindows.forEach((smallWindow) => {
+                smallWindow.style.display = "none";
+                smallWindow.style.zIndex = "-1";
+            });
+            smallWindow.style.display = "block";
+            smallWindow.style.zIndex = "2";
+        }
+        else {
+            smallWindow.style.display = "none";
+            smallWindow.style.zIndex = "-1";
+        }
+    }
 
+    const handleContent = (data) => {
         const contentTime0 = document.querySelector(".contentTime0");
         const contentTime1 = document.querySelector(".contentTime1");
         const contentTime2 = document.querySelector(".contentTime2");
@@ -58,7 +73,7 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
         contentCity.disabled = false;
         contentStreet.disabled = false;
         contentBuilding.disabled = false;
-        contentContainer.style.display = "block";
+        toggleWindow("contentContainer");
     }
 
     const handleLocation = (event) => {
@@ -107,21 +122,22 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
         const contentContainer = document.querySelector(".contentContainer");
         const elements = addContent.elements;
         const newData = {
-            eventName: elements.eventName,
-            typeId: parseInt(elements.typeId),
-            yearMonthDay: elements.time0 + elements.time1 + elements.time2,
-            startTime: elements.startTime,
-            endTime: elements.endTime,
-            locationId: elements.typeId,
-            cost: parseInt(elements.cost),
-            mood: elements.mood,
-            country: elements.country,
-            city: elements.city,
-            street: elements.street,
-            building: elements.building
+            eventName: elements.eventName.value,
+            typeId: parseInt(elements.typeId.value),
+            yearMonthDay: elements.time0.value + elements.time1.value + elements.time2.value,
+            startTime: elements.startTime.value,
+            endTime: elements.endTime.value,
+            locationId: elements.typeId.value,
+            cost: parseInt(elements.cost.value),
+            mood: elements.mood.value,
+            country: elements.country.value,
+            city: elements.city.value,
+            street: elements.street.value,
+            building: elements.building.value
         };
         //send to db
         //setDatas();
+        //console.log("newData: ", newData);
         contentContainer.style.display = "none";
     }
 
@@ -169,7 +185,7 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
                     })}
                 </tbody>
             </Table>
-            <div className="contentContainer" id="contentContainer"
+            <div className="contentContainer smallWindow" id="contentContainer"
                 style={{ position: "absolute", top: "3rem", left: "15rem", padding: "2rem 4rem", backgroundColor: "#A9BDDD", border: "solid 2px #5271A1", display: "none" }}
             >
                 <p
