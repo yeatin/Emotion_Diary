@@ -6,6 +6,7 @@ const ViewContainer = () => {
     const [endTime, setEndTime] = useState({ endYear: "", endMonth: "", endDay: "" });
     const [timeRange, setTimeRange] = useState([]);
     const [viewMode, setViewMode] = useState("normal");
+    const [chosenType, setChosenType] = useState(-1);
 
     const initialDatas = [
         {
@@ -67,11 +68,12 @@ const ViewContainer = () => {
     ];
     const [datas, setDatas] = useState(initialDatas);
     const [chosenData, setChosenData] = useState({});
+    const [cost, setCost] = useState(null);
 
     return (
         <div>
-            <ViewButtons startTime={startTime} setStartTime={setStartTime} endTime={endTime} setEndTime={setEndTime} setViewMode={setViewMode} setTimeRange={setTimeRange} datas={datas} />
-            <ViewTable datas={datas} setDatas={setDatas} startTime={startTime} endTime={endTime} viewMode={viewMode} timeRange={timeRange} chosenData={chosenData} setChosenData={setChosenData} />
+            <ViewButtons startTime={startTime} setStartTime={setStartTime} endTime={endTime} setEndTime={setEndTime} setViewMode={setViewMode} setTimeRange={setTimeRange} datas={datas} chosenType={chosenType} setChosenType={setChosenType} cost={cost} setCost={setCost} />
+            <ViewTable datas={datas} setDatas={setDatas} startTime={startTime} endTime={endTime} viewMode={viewMode} timeRange={timeRange} chosenData={chosenData} setChosenData={setChosenData} chosenType={chosenType} />
         </div>
     )
 }

@@ -21,7 +21,7 @@ const LoginPage = ({ password, setPassword }) => {
     const verifyPassword = () => {
         const loginFail = document.querySelector(".loginFail");
         loginFail.style.display = "none";
-        if (password === "mock") {
+        if (password === "0620") {
             document.cookie = "verified=true;";
             navigate("/view");
             window.location.reload();

@@ -40,40 +40,31 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
         }
     }
 
-    const handleContent = (data) => {
-        const contentTime0 = document.querySelector(".contentTime0");
-        const contentTime1 = document.querySelector(".contentTime1");
-        const contentTime2 = document.querySelector(".contentTime2");
-        const contentLocationId = document.querySelector(".contentLocationId");
-        const contentCountry = document.querySelector(".contentCountry");
-        const contentCity = document.querySelector(".contentCity");
-        const contentStreet = document.querySelector(".contentStreet");
-        const contentBuilding = document.querySelector(".contentBuilding");
-        const contentEventName = document.querySelector(".contentEventName");
-        const contentTypeId = document.querySelector(".contentTypeId");
-        const contentCost = document.querySelector(".contentCost");
-        const contentMood = document.querySelector(".contentMood");
-        const contentStartTime = document.querySelector(".contentStartTime");
-        const contentEndTime = document.querySelector(".contentEndTime");
-        contentTime0.value = data.yearMonthDay.slice(0, 4)
-        contentTime1.value = data.yearMonthDay.slice(4, 6)
-        contentTime2.value = data.yearMonthDay.slice(6, 8)
-        contentLocationId.value = data.locationId;
-        contentCountry.value = data.country;
-        contentCity.value = data.city;
-        contentStreet.value = data.street;
-        contentBuilding.value = data.building;
-        contentEventName.value = data.eventName;
-        contentTypeId.value = data.typeId;
-        contentCost.value = data.cost.toString();
-        contentMood.value = data.mood;
-        contentStartTime.value = data.startTime;
-        contentEndTime.value = data.endTime;
-        contentCountry.disabled = false;
-        contentCity.disabled = false;
-        contentStreet.disabled = false;
-        contentBuilding.disabled = false;
-        toggleWindow("contentContainer");
+    const handleUpdate = (data) => {
+        const updateContent = document.forms["updateContent"].elements;
+        const updateContentContainer = document.querySelector("#updateContentContainer");
+        updateContent.time0.value = data.yearMonthDay.slice(0, 4)
+        updateContent.time1.value = data.yearMonthDay.slice(4, 6)
+        updateContent.time2.value = data.yearMonthDay.slice(6, 8)
+        updateContent.locationId.value = data.locationId;
+        updateContent.country.value = data.country;
+        updateContent.city.value = data.city;
+        updateContent.street.value = data.street;
+        updateContent.building.value = data.building;
+        updateContent.eventName.value = data.eventName;
+        updateContent.typeId.value = data.typeId;
+        updateContent.cost.value = data.cost.toString();
+        updateContent.mood.value = data.mood;
+        updateContent.startTime.value = data.startTime;
+        updateContent.endTime.value = data.endTime;
+        updateContent.country.disabled = false;
+        updateContent.city.disabled = false;
+        updateContent.street.disabled = false;
+        updateContent.building.disabled = false;
+        toggleWindow("updateContentContainer");
+        //updateContentContainer必須再打開一次
+        updateContentContainer.style.display="block";
+        updateContentContainer.style.zIndex="2";
     }
 
     const handleLocation = (event) => {
@@ -100,7 +91,7 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
         }
         else {
             locations.forEach((location) => {
-                if (location.locationId == value) {
+                if (location.locationId === value) {
                     contentCountry.value = location.country;
                     contentCity.value = location.city;
                     contentStreet.value = location.street;
@@ -119,7 +110,6 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
     const handleSubmit = (event) => {
         event.preventDefault();
         const addContent = document.forms['addContent'];
-        const contentContainer = document.querySelector(".contentContainer");
         const elements = addContent.elements;
         const newData = {
             eventName: elements.eventName.value,
@@ -136,13 +126,19 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
             building: elements.building.value
         };
         //send to db
-        //setDatas();
-        //console.log("newData: ", newData);
-        contentContainer.style.display = "none";
+        if (event.target.id.includes("add")) {
+            //call db to insert data
+            toggleWindow("addContentContainer");
+        }
+        else if (event.target.id.includes("update")) {
+            //call db to update data
+            toggleWindow("updateContentContainer");
+        }
+
     }
 
     return (
-        <div style={{ position: "relative" }}>
+        <div style={{ position: "relative", overflowY: "auto", height:"40rem" }}>
             <Table striped bordered hover responsive variant='blue'
                 style={{ margin: "5rem auto 0 auto", width: "90%", backgroundColor: "#B9D8F5" }}>
                 <thead style={{ backgroundColor: "#1F66AB", color: "#fff", borderBottom: "solid 3px #fff" }}>
@@ -175,7 +171,7 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
                                 <td>{data.locationId}</td>
                                 <td style={{ textAlign: "center" }}>
                                     <a
-                                        onClick={() => handleContent(data)}
+                                        onClick={() => handleUpdate(data)}
                                         style={{ textDecoration: "underline", cursor: "pointer" }}
                                     >修改
                                     </a>
@@ -185,16 +181,13 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
                     })}
                 </tbody>
             </Table>
-            <div className="contentContainer smallWindow" id="contentContainer"
+            <div className="smallWindow" id="addContentContainer"
                 style={{ position: "absolute", top: "3rem", left: "15rem", padding: "2rem 4rem", backgroundColor: "#A9BDDD", border: "solid 2px #5271A1", display: "none" }}
             >
                 <p
                     className="closeContent"
                     style={{ position: "absolute", top: "0.5rem", right: "1rem", cursor: "pointer", fontSize: "1.5rem" }}
-                    onClick={() => {
-                        const contentContainer = document.querySelector(".contentContainer");
-                        contentContainer.style.display = "none";
-                    }}
+                    onClick={() => toggleWindow("addContentContainer")}
                 >X
                 </p>
                 <Form name="addContent">
@@ -225,8 +218,8 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
                                     >
                                         <option value="add">新增</option>
                                         {
-                                            locations.map((location) => {
-                                                return <option value={location.locationId}>{location.locationId}</option>
+                                            locations.map((location, index) => {
+                                                return <option key={index} value={location.locationId}>{location.locationId}</option>
 
                                             })
                                         }
@@ -275,8 +268,8 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
                                         className="contentTypeId"
                                     >
                                         {
-                                            types.map((type) => {
-                                                return <option value={type.typeId}>{type.typeId}</option>
+                                            types.map((type, index) => {
+                                                return <option key={index} value={type.typeId}>{type.typeId}</option>
 
                                             })
                                         }
@@ -302,6 +295,132 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
                                 </Form.Group>
                             </Stack>
                             <Button
+                                id="addButton"
+                                type="submit"
+                                variant="primary"
+                                style={{ width: "5rem", margin: "1rem auto 0 auto" }}
+                                onClick={handleSubmit}
+                            >套用
+                            </Button>
+                        </Stack>
+                    </fieldset>
+                </Form>
+            </div>
+            <div className="smallWindow" id="updateContentContainer"
+                style={{ position: "absolute", top: "3rem", left: "15rem", padding: "2rem 4rem", backgroundColor: "#A9BDDD", border: "solid 2px #5271A1", display: "none" }}
+            >
+                <p
+                    className="closeContent"
+                    style={{ position: "absolute", top: "0.5rem", right: "1rem", cursor: "pointer", fontSize: "1.5rem" }}
+                    onClick={() => toggleWindow("updateContentContainer")}
+                >X
+                </p>
+                <Form name="updateContent">
+                    <fieldset>
+                        <Stack>
+                            <Stack direction="horizontal" gap={2}>
+                                <p style={{ margin: "0", fontSize: "1.3rem" }}>時間：</p>
+                                <Form.Group>
+                                    <Form.Control placeholder="YYYY" name="time0" className="contentTime0" />
+                                </Form.Group>
+                                <p style={{ fontSize: "1.5rem", margin: "0" }}>\</p>
+                                <Form.Group>
+                                    <Form.Control placeholder="MM" name="time1" className="contentTime1" />
+                                </Form.Group>
+                                <p style={{ fontSize: "1.5rem", margin: "0" }}>\</p>
+                                <Form.Group>
+                                    <Form.Control placeholder="DD" name="time2" className="contentTime2" />
+                                </Form.Group>
+                            </Stack>
+                            <Stack direction="horizontal" gap={2} style={{ marginTop: "1rem" }}>
+                                <p style={{ margin: "0", fontSize: "1.3rem" }}>地點：（查詢已儲存的地點編號</p>
+                                <Form.Group>
+                                    <Form.Select
+                                        style={{ width: "5rem" }}
+                                        name="locationId"
+                                        className="contentLocationId"
+                                        onChange={handleLocation}
+                                    >
+                                        <option value="add">新增</option>
+                                        {
+                                            locations.map((location, index) => {
+                                                return <option key={index} value={location.locationId}>{location.locationId}</option>
+
+                                            })
+                                        }
+                                    </Form.Select>
+                                </Form.Group>
+                                <p style={{ margin: "0", fontSize: "1.3rem" }}>）</p>
+                                {
+                                    locationMax >= 0 ?
+                                        <Stack direction="horizontal" className="contentAddLocation">
+                                            <p style={{ margin: "0", fontSize: "1.3rem" }}>（新增地點編號：</p>
+                                            <p style={{ margin: "0", fontSize: "1.3rem", textDecoration: "underline" }}>{locationMax}</p>
+                                            <p style={{ margin: "0", fontSize: "1.3rem" }}>）</p>
+                                        </Stack>
+                                        : <></>
+                                }
+                            </Stack>
+                            <Stack direction="horizontal" gap={2} style={{ marginTop: "1rem" }}>
+                                <p style={{ margin: "0", fontSize: "1.3rem" }}>國家：</p>
+                                <Form.Group>
+                                    <Form.Control placeholder="Country" name="country" className="contentCountry" />
+                                </Form.Group>
+                                <p style={{ fontSize: "1.5rem", margin: "0 0 0 1rem" }}>城市：</p>
+                                <Form.Group>
+                                    <Form.Control placeholder="City" name="city" className="contentCity" />
+                                </Form.Group>
+                                <p style={{ fontSize: "1.5rem", margin: "0 0 0 1rem" }}>街道：</p>
+                                <Form.Group>
+                                    <Form.Control placeholder="Street" name="street" className="contentStreet" />
+                                </Form.Group>
+                            </Stack>
+                            <Stack direction="horizontal" gap={2} style={{ marginTop: "1rem" }}>
+                                <p style={{ margin: "0", fontSize: "1.3rem", width: "7rem" }}>建築名稱：</p>
+                                <Form.Control placeholder="Building" name="building" style={{ width: "10rem", maxWidth: "100%" }} className="contentBuilding"></Form.Control>
+                            </Stack>
+                            <p style={{ margin: "1rem 0 0 0", fontSize: "1.3rem" }}>事件：</p>
+                            <Stack direction="horizontal" gap={2} style={{ marginTop: "1rem" }}>
+                                <p style={{ margin: "0", fontSize: "1.3rem" }}>事件名稱：</p>
+                                <Form.Group>
+                                    <Form.Control placeholder="Event_name" name="eventName" className="contentEventName" />
+                                </Form.Group>
+                                <p style={{ fontSize: "1.5rem", margin: "0 0 0 1rem" }}>事件種類代號：</p>
+                                <Form.Group>
+                                    <Form.Select
+                                        style={{ width: "5rem" }}
+                                        name="typeId"
+                                        className="contentTypeId"
+                                    >
+                                        {
+                                            types.map((type, index) => {
+                                                return <option key={index} value={type.typeId}>{type.typeId}</option>
+
+                                            })
+                                        }
+                                    </Form.Select>
+                                </Form.Group>
+                                <p style={{ fontSize: "1.5rem", margin: "0 0 0 1rem" }}>花費：</p>
+                                <Form.Group>
+                                    <Form.Control placeholder="Cost" name="cost" className="contentCost" />
+                                </Form.Group>
+                            </Stack>
+                            <Stack direction="horizontal" gap={2} style={{ marginTop: "1rem" }}>
+                                <p style={{ margin: "0", fontSize: "1.3rem" }}>事件心情：</p>
+                                <Form.Group>
+                                    <Form.Control placeholder="Mood" name="mood" className="contentMood" />
+                                </Form.Group>
+                                <p style={{ fontSize: "1.5rem", margin: "0 0 0 1rem" }}>開始時間：</p>
+                                <Form.Group>
+                                    <Form.Control placeholder="Start_time" name="startTime" className="contentStartTime" />
+                                </Form.Group>
+                                <p style={{ fontSize: "1.5rem", margin: "0 0 0 1rem" }}>結束時間：</p>
+                                <Form.Group>
+                                    <Form.Control placeholder="End_time" name="endTime" className="contentEndTime" />
+                                </Form.Group>
+                            </Stack>
+                            <Button
+                                id="updateButton"
                                 type="submit"
                                 variant="primary"
                                 style={{ width: "5rem", margin: "1rem auto 0 auto" }}

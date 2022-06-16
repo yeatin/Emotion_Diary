@@ -51,39 +51,22 @@ const EditButtons = ({ datas, chosenData, types }) => {
     }
 
     const handleCreateData = () => {
-        const contentContainer = document.querySelector(".contentContainer");
-        const closeContent = document.querySelector(".closeContent");
-
-        const contentTime0 = document.querySelector(".contentTime0");
-        const contentTime1 = document.querySelector(".contentTime1");
-        const contentTime2 = document.querySelector(".contentTime2");
-        const contentLocationId = document.querySelector(".contentLocationId");
-        const contentCountry = document.querySelector(".contentCountry");
-        const contentCity = document.querySelector(".contentCity");
-        const contentStreet = document.querySelector(".contentStreet");
-        const contentBuilding = document.querySelector(".contentBuilding");
-        const contentEventName = document.querySelector(".contentEventName");
-        const contentTypeId = document.querySelector(".contentTypeId");
-        const contentCost = document.querySelector(".contentCost");
-        const contentMood = document.querySelector(".contentMood");
-        const contentStartTime = document.querySelector(".contentStartTime");
-        const contentEndTime = document.querySelector(".contentEndTime");
-        closeContent.addEventListener("click", () => contentContainer.style.display = "none");
-        contentTime0.value = "";
-        contentTime1.value = "";
-        contentTime2.value = "";
-        contentLocationId.selectedIndex = 0;
-        contentCountry.value = "";
-        contentCity.value = "";
-        contentStreet.value = "";
-        contentBuilding.value = "";
-        contentEventName.value = "";
-        contentTypeId.selectedIndex = 0;
-        contentCost.value = "";
-        contentMood.value = "";
-        contentStartTime.value = "";
-        contentEndTime.value = "";
-        toggleWindow("contentContainer");
+        const addContent = document.forms["addContent"].elements;
+        addContent.time0.value = "";
+        addContent.time1.value = "";
+        addContent.time2.value = "";
+        addContent.locationId.selectedIndex = 0;
+        addContent.country.value = "";
+        addContent.city.value = "";
+        addContent.street.value = "";
+        addContent.building.value = "";
+        addContent.eventName.value = "";
+        addContent.typeId.selectedIndex = 0;
+        addContent.cost.value = "";
+        addContent.mood.value = "";
+        addContent.startTime.value = "";
+        addContent.endTime.value = "";
+        toggleWindow("addContentContainer");
     }
     /*
     const uniqueArray = [];
@@ -184,7 +167,7 @@ const EditButtons = ({ datas, chosenData, types }) => {
                                             <option value="無">無</option>
                                             {
                                                 types.map((type) => {
-                                                    return <option value={type.typeId}>{type.typeId}</option>
+                                                    return <option key={"type"+type.typeId} value={type.typeId}>{type.typeId}</option>
                                                 })
                                             }
                                         </Form.Select>
