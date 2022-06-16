@@ -7,7 +7,7 @@ import Alert from "react-bootstrap/Alert";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
 
-const EditButtons = ({ datas, chosenData, types }) => {
+const EditButtons = ({ datas, chosenData, types, setViewMode, setKeywordDatas }) => {
     const navigate = useNavigate();
 
     const toggleWindow = (id) => {
@@ -106,13 +106,60 @@ const EditButtons = ({ datas, chosenData, types }) => {
         editType.style.display = "none";
     }
 
+    const handleViewKeyowrd = (event) => {
+        if (event.key === "Enter") {
+            if (event.target.value === "") {
+                setViewMode("normal");
+                return;
+            }
+            let result = [];
+
+            if (isNaN(event.target.value)) {
+                result = datas.map((data) => {
+                    for (let item in data) {
+                        if (typeof data[item] === "string") {
+                            if (data[item].toLowerCase().includes(event.target.value.toLowerCase())) {
+                                return data;
+                            }
+                            const year = data.yearMonthDay.slice(0, 4);
+                            const month = data.yearMonthDay.slice(4, 6);
+                            const day = data.yearMonthDay.slice(6, 8);
+                            const int = parseInt(event.target.value);
+                            if (parseInt(year) === int || parseInt(month) === int || parseInt(day) === int) {
+                                return data;
+                            }
+                        }
+                    }
+                    return null;
+                })
+            }
+            else {
+                result = datas.map((data) => {
+                    for (let item in data) {
+                        if (typeof data[item] === "number") {
+                            if (data[item] === (parseInt(event.target.value))) {
+                                return data;
+                            }
+                            if (data.yearMonthDay.includes(event.target.value)) {
+                                return data;
+                            }
+                        }
+                    }
+                    return null;
+                })
+            }
+            setKeywordDatas(result);
+            setViewMode("keyword");
+        }
+    }
+
     return (
         <div>
             <div>
                 <Alert variant="primary" style={{ width: "20rem", height: "5rem", fontSize: "3rem", textAlign: "center", margin: "0", padding: "0" }}>編輯頁面</Alert>
             </div>
             <div style={{ margin: "5rem auto 0 auto", width: "90%", position: "relative" }}>
-                <ButtonGroup style={{ width: "70rem", margin: "0 auto" }}>
+                <ButtonGroup style={{ width: "100%", margin: "0 auto" }}>
                     <Button variant="outline-secondary"
                         style={{ height: "5rem", fontSize: "1.4rem" }}
                         onClick={() => handleButton("view")}
@@ -144,6 +191,12 @@ const EditButtons = ({ datas, chosenData, types }) => {
                         onClick={() => handleButton("editType")}
                     >
                         事件類別新增/刪除</Button>
+                    <Stack style={{ width: "20rem" }}>
+                        <p style={{ margin: "0", fontSize: "1.3rem", border: "solid #000 2px", textAlign: "center" }}>關鍵字搜尋</p>
+                        <Form.Group>
+                            <Form.Control id="editKeyword" style={{ height: "100%", padding: "0.7rem" }} onKeyDown={handleViewKeyowrd} />
+                        </Form.Group>
+                    </Stack>
                 </ButtonGroup>
                 <div id="editType" className="smallWindow" style={{ width: "40rem", margin: "0", position: "absolute", top: "7rem", "left": "45rem", display: "none" }}>
                     <div style={{ backgroundColor: "#1F66AB", width: "3px", height: "2rem", position: "absolute", top: "-2rem", left: "35%" }}></div>
@@ -167,7 +220,7 @@ const EditButtons = ({ datas, chosenData, types }) => {
                                             <option value="無">無</option>
                                             {
                                                 types.map((type) => {
-                                                    return <option key={"type"+type.typeId} value={type.typeId}>{type.typeId}</option>
+                                                    return <option key={"type" + type.typeId} value={type.typeId}>{type.typeId}</option>
                                                 })
                                             }
                                         </Form.Select>

@@ -69,11 +69,12 @@ const ViewContainer = () => {
     const [datas, setDatas] = useState(initialDatas);
     const [chosenData, setChosenData] = useState({});
     const [cost, setCost] = useState(null);
+    const [keywordDatas, setKeywordDatas] = useState([]);
 
     return (
         <div>
-            <ViewButtons startTime={startTime} setStartTime={setStartTime} endTime={endTime} setEndTime={setEndTime} setViewMode={setViewMode} setTimeRange={setTimeRange} datas={datas} chosenType={chosenType} setChosenType={setChosenType} cost={cost} setCost={setCost} />
-            <ViewTable datas={datas} setDatas={setDatas} startTime={startTime} endTime={endTime} viewMode={viewMode} timeRange={timeRange} chosenData={chosenData} setChosenData={setChosenData} chosenType={chosenType} />
+            <ViewButtons startTime={startTime} setStartTime={setStartTime} endTime={endTime} setEndTime={setEndTime} setViewMode={setViewMode} setTimeRange={setTimeRange} datas={datas} chosenType={chosenType} setChosenType={setChosenType} cost={cost} setCost={setCost} setKeywordDatas={setKeywordDatas} />
+            <ViewTable datas={datas} setDatas={setDatas} startTime={startTime} endTime={endTime} viewMode={viewMode} timeRange={timeRange} chosenData={chosenData} setChosenData={setChosenData} chosenType={chosenType} keywordDatas={keywordDatas} />
         </div>
     )
 }

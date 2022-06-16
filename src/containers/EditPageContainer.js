@@ -113,11 +113,12 @@ const EditPageContainer = () => {
     const [locations, setLocations] = useState(initialLocations);
     const [types, setTypes] = useState(initialTypes);
     const [locationMax, setLocationMax] = useState(-1);
+    const [keywordDatas, setKeywordDatas] = useState([]);
 
     return (
         <div>
-            <EditButtons datas={datas} chosenData={chosenData} types={types} />
-            <EditTable datas={datas} setDatas={setDatas} chosenData={chosenData} setChosenData={setChosenData} locations={locations} setLocations={setLocations} types={types} setTypes={setTypes} locationMax={locationMax} setLocationMax={setLocationMax} />
+            <EditButtons datas={datas} chosenData={chosenData} types={types} setViewMode={setViewMode} setKeywordDatas={setKeywordDatas}  />
+            <EditTable datas={datas} setDatas={setDatas} chosenData={chosenData} setChosenData={setChosenData} locations={locations} setLocations={setLocations} types={types} setTypes={setTypes} locationMax={locationMax} setLocationMax={setLocationMax} viewMode={viewMode} keywordDatas={keywordDatas} />
         </div>
     )
 }

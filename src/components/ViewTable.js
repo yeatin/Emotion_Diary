@@ -2,7 +2,7 @@ import Table from 'react-bootstrap/Table';
 import Stack from "react-bootstrap/Stack";
 import Form from "react-bootstrap/Form";
 
-const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosenData, chosenType }) => {
+const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosenData, chosenType, keywordDatas }) => {
 
     const toggleWindow = (id) => {
         const smallWindow = document.querySelector(`#${id}`);
@@ -63,7 +63,7 @@ const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosen
     }
 
     return (
-        <div style={{ position: "relative", overflowY: "auto", height:"40rem" }}>
+        <div style={{ position: "relative", overflowY: "auto", height: "40rem" }}>
             <Table striped bordered hover responsive variant='blue'
                 style={{ margin: "5rem auto 0 auto", width: "90%", backgroundColor: "#B9D8F5" }}>
                 <thead style={{ backgroundColor: "#1F66AB", color: "#fff", borderBottom: "solid 3px #fff" }}>
@@ -74,50 +74,67 @@ const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosen
                     </tr>
                 </thead>
                 <tbody>
-                    {datas.map((data, index) => {
-                        if (viewMode === "time") {
-                            return timeRange[0] <= data.yearMonthDay && data.yearMonthDay <= timeRange[1] ? (
-                                <tr
-                                    key={`row${index}`}
-                                    id={`row${index}`}
-                                    style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
-                                    onClick={() => handleContent(data)}>
-                                    <td>{data.eventName}</td>
-                                    <td>{data.yearMonthDay}</td>
-                                    <td>{data.locationId}</td>
-                                </tr>
-                            )
-                                : null;
-                        }
-                        else if (viewMode === "type") {
-                            console.log("typeId=", chosenType);
-                            return data.typeId === chosenType ? (
-                                <tr
-                                    key={`row${index}`}
-                                    id={`row${index}`}
-                                    style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
-                                    onClick={() => handleContent(data)}>
-                                    <td>{data.eventName}</td>
-                                    <td>{data.yearMonthDay}</td>
-                                    <td>{data.locationId}</td>
-                                </tr>
-                            )
-                                : null;
-                        }
-                        else {
-                            return (
-                                <tr
-                                    key={index}
-                                    id={index}
-                                    style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
-                                    onClick={() => handleContent(data)}>
-                                    <td>{data.eventName}</td>
-                                    <td>{data.yearMonthDay}</td>
-                                    <td>{data.locationId}</td>
-                                </tr>
-                            )
-                        }
-                    })}
+                    {
+                        viewMode === "keyword" ?
+                            keywordDatas.map((data, index) => {
+                                if (data)
+                                    return (
+                                        <tr
+                                            key={index}
+                                            id={index}
+                                            style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
+                                            onClick={() => handleContent(data)}>
+                                            <td>{data.eventName}</td>
+                                            <td>{data.yearMonthDay}</td>
+                                            <td>{data.locationId}</td>
+                                        </tr>
+                                    )
+                                return null;
+                            })
+                            :
+                            datas.map((data, index) => {
+                                if (viewMode === "time") {
+                                    return timeRange[0] <= data.yearMonthDay && data.yearMonthDay <= timeRange[1] ? (
+                                        <tr
+                                            key={`row${index}`}
+                                            id={`row${index}`}
+                                            style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
+                                            onClick={() => handleContent(data)}>
+                                            <td>{data.eventName}</td>
+                                            <td>{data.yearMonthDay}</td>
+                                            <td>{data.locationId}</td>
+                                        </tr>
+                                    )
+                                        : null;
+                                }
+                                else if (viewMode === "type") {
+                                    return data.typeId === chosenType ? (
+                                        <tr
+                                            key={`row${index}`}
+                                            id={`row${index}`}
+                                            style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
+                                            onClick={() => handleContent(data)}>
+                                            <td>{data.eventName}</td>
+                                            <td>{data.yearMonthDay}</td>
+                                            <td>{data.locationId}</td>
+                                        </tr>
+                                    )
+                                        : null;
+                                }
+                                else {
+                                    return (
+                                        <tr
+                                            key={index}
+                                            id={index}
+                                            style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
+                                            onClick={() => handleContent(data)}>
+                                            <td>{data.eventName}</td>
+                                            <td>{data.yearMonthDay}</td>
+                                            <td>{data.locationId}</td>
+                                        </tr>
+                                    )
+                                }
+                            })}
                 </tbody>
             </Table>
             <div className="contentContainer smallWindow" id="contentContainer"

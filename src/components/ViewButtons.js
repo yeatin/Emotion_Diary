@@ -7,7 +7,7 @@ import Alert from "react-bootstrap/Alert";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
 
-const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime, setViewMode, setTimeRange, datas, chosenType, setChosenType, cost, setCost }) => {
+const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime, setViewMode, setTimeRange, datas, chosenType, setChosenType, cost, setCost, setKeywordDatas }) => {
     const navigate = useNavigate();
 
     const toggleWindow = (id) => {
@@ -98,6 +98,59 @@ const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime, setViewMode
         setCost(cost);
     }
 
+    const handleTypeCost = (index) => {
+        let cost = 0;
+        datas.forEach((data) => { if (data.typeId === index) cost += data.cost });
+        setCost(cost);
+    }
+
+    const handleViewKeyowrd = (event) => {
+        if (event.key === "Enter") {
+            if(event.target.value === ""){
+                setViewMode("normal");
+                return;
+            }
+            let result = [];
+
+            if (isNaN(event.target.value)) {
+                result = datas.map((data) => {
+                    for (let item in data) {
+                        if (typeof data[item] === "string") {
+                            if (data[item].toLowerCase().includes(event.target.value.toLowerCase())) {
+                                return data;
+                            }
+                            const year = data.yearMonthDay.slice(0, 4);
+                            const month = data.yearMonthDay.slice(4, 6);
+                            const day = data.yearMonthDay.slice(6, 8);
+                            const int = parseInt(event.target.value);
+                            if(parseInt(year) === int || parseInt(month) === int || parseInt(day) === int){
+                                return data;
+                            }
+                        }
+                    }
+                    return null;
+                })
+            }
+            else {
+                result = datas.map((data) => {
+                    for (let item in data) {
+                        if (typeof data[item] === "number") {
+                            if (data[item] === (parseInt(event.target.value))) {
+                                return data;
+                            }
+                            if (data.yearMonthDay.includes(event.target.value)) {
+                                return data;
+                            }
+                        }
+                    }
+                    return null;
+                })
+            }
+            setKeywordDatas(result);
+            setViewMode("keyword");
+        }
+    }
+
     const uniqueArray = [];
     datas.forEach(item => {
         if (!uniqueArray[item.typeId]) {
@@ -111,7 +164,7 @@ const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime, setViewMode
                 <Alert variant="primary" style={{ width: "20rem", height: "5rem", fontSize: "3rem", textAlign: "center", margin: "0", padding: "0" }}>檢視頁面</Alert>
             </div>
             <div style={{ margin: "5rem auto 0 auto", width: "90%", position: "relative" }}>
-                <ButtonGroup style={{ width: "70rem", margin: "0 auto" }}>
+                <ButtonGroup style={{ width: "100%", margin: "0 auto" }}>
                     <Button variant="outline-secondary"
                         style={{ height: "5rem", fontSize: "1.4rem" }}
                         onClick={() => handleButton("edit")}
@@ -132,7 +185,18 @@ const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime, setViewMode
                         onClick={() => handleButton("timeRangeCostContainer")}
                     >時間段事件花費統計
                     </Button>
-                    <Button variant="outline-secondary" style={{ height: "5rem", fontSize: "1.4rem" }}>同類型事件花費統計</Button>
+                    <Button
+                        variant="outline-secondary"
+                        style={{ height: "5rem", fontSize: "1.4rem" }}
+                        onClick={() => handleButton("typeCost")}
+                    >同類型事件花費統計
+                    </Button>
+                    <Stack style={{ width: "20rem" }}>
+                        <p style={{ margin: "0", fontSize: "1.3rem", border: "solid #000 2px", textAlign: "center" }}>關鍵字搜尋</p>
+                        <Form.Group>
+                            <Form.Control id="viewKeyword" style={{ height: "100%", padding: "0.7rem" }} onKeyDown={handleViewKeyowrd} />
+                        </Form.Group>
+                    </Stack>
                 </ButtonGroup>
                 <div id="switchToTime" className="smallWindow" style={{ width: "40rem", margin: "0", position: "absolute", top: "7rem", "left": "5rem", display: "none" }}>
                     <div style={{ backgroundColor: "#1F66AB", width: "3px", height: "2rem", position: "absolute", top: "-2rem", left: "35%" }}></div>
@@ -179,6 +243,7 @@ const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime, setViewMode
                                     if (item) {
                                         return <Dropdown.Item key={index} onClick={() => handleDropdown(index)} value={index}>{index}</Dropdown.Item>
                                     }
+                                    return null;
                                 })
                             }
                         </DropdownButton>
@@ -231,6 +296,25 @@ const ViewButtons = ({ startTime, setStartTime, endTime, setEndTime, setViewMode
                             </Stack>
                         </fieldset>
                     </Form>
+                </div>
+                <div id="typeCost" className="smallWindow" style={{ width: "15rem", position: "absolute", top: "7rem", "left": "55rem", display: "none" }}>
+                    <div style={{ backgroundColor: "#1F66AB", width: "3px", height: "2rem", position: "absolute", top: "-2rem", left: "35%" }}></div>
+                    <div style={{ backgroundColor: "#B9D8F5", border: "2px solid #1F66AB", padding: "1rem" }}>
+                        <DropdownButton
+                            variant="primary"
+                            title="事件種類代號"
+                            id="typeCostDropdown">
+                            {
+                                uniqueArray.map((item, index) => {
+                                    if (item) {
+                                        return <Dropdown.Item key={index} onClick={() => handleTypeCost(index)} value={index}>{index}</Dropdown.Item>
+                                    }
+                                    return null;
+                                })
+                            }
+                        </DropdownButton>
+                        <p style={{ fontSize: "1.3rem", marginTop: "1rem " }}>總共花費：{cost}</p>
+                    </div>
                 </div>
             </div>
         </div>

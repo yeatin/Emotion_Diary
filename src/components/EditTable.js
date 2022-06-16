@@ -3,7 +3,7 @@ import Stack from "react-bootstrap/Stack";
 import Form from "react-bootstrap/Form";
 import Button from 'react-bootstrap/Button';
 
-const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setLocations, types, setTypes, locationMax, setLocationMax }) => {
+const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setLocations, types, setTypes, locationMax, setLocationMax, viewMode, keywordDatas }) => {
 
     const handleSelect = (id, data) => {
         const selectedCircle = document.querySelector(`#${id}`);
@@ -63,8 +63,8 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
         updateContent.building.disabled = false;
         toggleWindow("updateContentContainer");
         //updateContentContainer必須再打開一次
-        updateContentContainer.style.display="block";
-        updateContentContainer.style.zIndex="2";
+        updateContentContainer.style.display = "block";
+        updateContentContainer.style.zIndex = "2";
     }
 
     const handleLocation = (event) => {
@@ -138,7 +138,7 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
     }
 
     return (
-        <div style={{ position: "relative", overflowY: "auto", height:"40rem" }}>
+        <div style={{ position: "relative", overflowY: "auto", height: "40rem" }}>
             <Table striped bordered hover responsive variant='blue'
                 style={{ margin: "5rem auto 0 auto", width: "90%", backgroundColor: "#B9D8F5" }}>
                 <thead style={{ backgroundColor: "#1F66AB", color: "#fff", borderBottom: "solid 3px #fff" }}>
@@ -151,34 +151,67 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
                     </tr>
                 </thead>
                 <tbody>
-                    {datas.map((data, index) => {
-                        return (
-                            <tr
-                                key={index}
-                                id={`editRow${index}`}
-                                style={{ fontSize: "1.4rem", fontWeight: "900" }}
-                            >
-                                <td
-                                    style={{ padding: "0" }}
-                                    onClick={() => handleSelect(`circle${index}`, data)}>
-                                    <div id={`circle${index}`}
-                                        className="circle"
-                                        style={{ border: "solid 3px #000", borderRadius: "50%", width: "1.5rem", height: "1.5rem", margin: "0.7rem auto" }}>
-                                    </div>
-                                </td>
-                                <td>{data.eventName}</td>
-                                <td>{data.yearMonthDay}</td>
-                                <td>{data.locationId}</td>
-                                <td style={{ textAlign: "center" }}>
-                                    <a
-                                        onClick={() => handleUpdate(data)}
-                                        style={{ textDecoration: "underline", cursor: "pointer" }}
-                                    >修改
-                                    </a>
-                                </td>
-                            </tr>
-                        )
-                    })}
+                    {
+                        viewMode === "keyword" ?
+                            keywordDatas.map((data, index) => {
+                                if (data)
+                                    return (
+                                        <tr
+                                            key={index}
+                                            id={`editRow${index}`}
+                                            style={{ fontSize: "1.4rem", fontWeight: "900" }}
+                                        >
+                                            <td
+                                                style={{ padding: "0" }}
+                                                onClick={() => handleSelect(`circle${index}`, data)}>
+                                                <div id={`circle${index}`}
+                                                    className="circle"
+                                                    style={{ border: "solid 3px #000", borderRadius: "50%", width: "1.5rem", height: "1.5rem", margin: "0.7rem auto" }}>
+                                                </div>
+                                            </td>
+                                            <td>{data.eventName}</td>
+                                            <td>{data.yearMonthDay}</td>
+                                            <td>{data.locationId}</td>
+                                            <td style={{ textAlign: "center" }}>
+                                                <p
+                                                    onClick={() => handleUpdate(data)}
+                                                    style={{ textDecoration: "underline", cursor: "pointer" }}
+                                                >修改
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    )
+                                return null;
+                            })
+                            :
+                            datas.map((data, index) => {
+                                return (
+                                    <tr
+                                        key={index}
+                                        id={`editRow${index}`}
+                                        style={{ fontSize: "1.4rem", fontWeight: "900" }}
+                                    >
+                                        <td
+                                            style={{ padding: "0" }}
+                                            onClick={() => handleSelect(`circle${index}`, data)}>
+                                            <div id={`circle${index}`}
+                                                className="circle"
+                                                style={{ border: "solid 3px #000", borderRadius: "50%", width: "1.5rem", height: "1.5rem", margin: "0.7rem auto" }}>
+                                            </div>
+                                        </td>
+                                        <td>{data.eventName}</td>
+                                        <td>{data.yearMonthDay}</td>
+                                        <td>{data.locationId}</td>
+                                        <td style={{ textAlign: "center" }}>
+                                            <p
+                                                onClick={() => handleUpdate(data)}
+                                                style={{ textDecoration: "underline", cursor: "pointer" }}
+                                            >修改
+                                            </p>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
                 </tbody>
             </Table>
             <div className="smallWindow" id="addContentContainer"
