@@ -125,7 +125,15 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
             street: elements.street.value,
             building: elements.building.value
         };
-        //send to db
+        const newDatas = [...datas]
+        newDatas.push(newData);
+        if(event.target.id.includes("add")){
+            //call db insert
+            setDatas(newDatas);
+        }
+        else{
+            //call db update
+        }
         if (event.target.id.includes("add")) {
             //call db to insert data
             toggleWindow("addContentContainer");

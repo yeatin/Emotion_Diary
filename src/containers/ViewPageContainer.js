@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ViewButtons from "../components/ViewButtons";
 import ViewTable from "../components/ViewTable";
 const ViewContainer = () => {
@@ -70,6 +70,10 @@ const ViewContainer = () => {
     const [chosenData, setChosenData] = useState({});
     const [cost, setCost] = useState(null);
     const [keywordDatas, setKeywordDatas] = useState([]);
+
+    useEffect(() => {
+        //call db to get datas
+    }, [])
 
     return (
         <div>

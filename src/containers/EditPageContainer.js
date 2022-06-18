@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import EditButtons from "../components/EditButtons";
 import EditTable from "../components/EditTable";
 
@@ -114,6 +114,10 @@ const EditPageContainer = () => {
     const [types, setTypes] = useState(initialTypes);
     const [locationMax, setLocationMax] = useState(-1);
     const [keywordDatas, setKeywordDatas] = useState([]);
+
+    useEffect(() => {
+        //call db to get datas
+    }, [])
 
     return (
         <div>

@@ -1,8 +1,6 @@
 import Stack from "react-bootstrap/Stack";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
 import Alert from "react-bootstrap/Alert";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
@@ -39,7 +37,7 @@ const EditButtons = ({ datas, chosenData, types, setViewMode, setKeywordDatas })
                 copyData(chosenData);
                 break;
             case "deleteData":
-                copyData(chosenData);
+                deleteData(chosenData);
                 break;
             case "editType":
                 handleType();
