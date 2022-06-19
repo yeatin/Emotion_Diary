@@ -57,10 +57,6 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
         updateContent.mood.value = data.mood;
         updateContent.startTime.value = data.startTime;
         updateContent.endTime.value = data.endTime;
-        updateContent.country.disabled = false;
-        updateContent.city.disabled = false;
-        updateContent.street.disabled = false;
-        updateContent.building.disabled = false;
         toggleWindow("updateContentContainer");
         //updateContentContainer必須再打開一次
         updateContentContainer.style.display = "block";
@@ -68,21 +64,24 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
     }
 
     const handleLocation = (event) => {
-        const contentCountry = document.querySelector(".contentCountry");
-        const contentCity = document.querySelector(".contentCity");
-        const contentStreet = document.querySelector(".contentStreet");
-        const contentBuilding = document.querySelector(".contentBuilding");
+        let elements;
+        if(event.target.id.includes("add")){
+            elements = document.forms["addContent"].elements;
+        }
+        else{
+            elements = document.forms["updateContent"].elements;
+        }
         const value = event.target.value;
-        console.log("value", value);
-        if (value === "新增") {
-            contentCountry.value = "";
-            contentCity.value = "";
-            contentStreet.value = "";
-            contentBuilding.value = "";
-            contentCountry.disabled = false;
-            contentCity.disabled = false;
-            contentStreet.disabled = false;
-            contentBuilding.disabled = false;
+
+        if (value === "add") {
+            elements.country.value = "";
+            elements.city.value = "";
+            elements.street.value = "";
+            elements.building.value = "";
+            elements.country.disabled = false;
+            elements.city.disabled = false;
+            elements.street.disabled = false;
+            elements.building.disabled = false;
             let max = -1;
             locations.forEach((location) => max = location.locationId > max ? location.locationId : max);
             if (max >= 0) {
@@ -91,15 +90,15 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
         }
         else {
             locations.forEach((location) => {
-                if (location.locationId === value) {
-                    contentCountry.value = location.country;
-                    contentCity.value = location.city;
-                    contentStreet.value = location.street;
-                    contentBuilding.value = location.building;
-                    contentCountry.disabled = true;
-                    contentCity.disabled = true;
-                    contentStreet.disabled = true;
-                    contentBuilding.disabled = true;
+                if (location.locationId === parseInt(value)) {
+                    elements.country.value = location.country;
+                    elements.city.value = location.city;
+                    elements.street.value = location.street;
+                    elements.building.value = location.building;
+                    elements.country.disabled = true;
+                    elements.city.disabled = true;
+                    elements.street.disabled = true;
+                    elements.building.disabled = true;
                     return;
                 }
             })
@@ -109,8 +108,13 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        const addContent = document.forms['addContent'];
-        const elements = addContent.elements;
+        let elements;
+        if(event.target.id.includes("add")){
+            elements = document.forms["addContent"].elements;
+        }
+        else{
+            elements = document.forms["updateContent"].elements;
+        }
         const newData = {
             eventName: elements.eventName.value,
             typeId: parseInt(elements.typeId.value),
@@ -127,19 +131,22 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
         };
         const newDatas = [...datas]
         newDatas.push(newData);
-        if(event.target.id.includes("add")){
-            //call db insert
-            setDatas(newDatas);
-        }
-        else{
-            //call db update
-        }
+
         if (event.target.id.includes("add")) {
+            setDatas(newDatas);
             //call db to insert data
             toggleWindow("addContentContainer");
         }
         else if (event.target.id.includes("update")) {
             //call db to update data
+            let oldData;
+            datas.forEach((data) => {
+                if(data.eventName === elements.eventName.value && data.yearMonthDay === elements.time0.value + elements.time1.value + elements.time2.value){
+                    oldData = data;
+                    return;
+                }
+            })
+            const result = {oldData: oldData, newData: newData};
             toggleWindow("updateContentContainer");
         }
 
@@ -252,6 +259,7 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
                                 <p style={{ margin: "0", fontSize: "1.3rem" }}>地點：（查詢已儲存的地點編號</p>
                                 <Form.Group>
                                     <Form.Select
+                                        id="addContentLocationId"
                                         style={{ width: "5rem" }}
                                         name="locationId"
                                         className="contentLocationId"
@@ -271,7 +279,7 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
                                     locationMax >= 0 ?
                                         <Stack direction="horizontal" className="contentAddLocation">
                                             <p style={{ margin: "0", fontSize: "1.3rem" }}>（新增地點編號：</p>
-                                            <p style={{ margin: "0", fontSize: "1.3rem", textDecoration: "underline" }}>{locationMax}</p>
+                                            <p style={{ margin: "0", fontSize: "1.3rem", textDecoration: "underline" }}>{locationMax + 1}</p>
                                             <p style={{ margin: "0", fontSize: "1.3rem" }}>）</p>
                                         </Stack>
                                         : <></>
@@ -377,6 +385,7 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
                                 <p style={{ margin: "0", fontSize: "1.3rem" }}>地點：（查詢已儲存的地點編號</p>
                                 <Form.Group>
                                     <Form.Select
+                                        id="updateContentLocationId"
                                         style={{ width: "5rem" }}
                                         name="locationId"
                                         className="contentLocationId"
@@ -396,7 +405,7 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
                                     locationMax >= 0 ?
                                         <Stack direction="horizontal" className="contentAddLocation">
                                             <p style={{ margin: "0", fontSize: "1.3rem" }}>（新增地點編號：</p>
-                                            <p style={{ margin: "0", fontSize: "1.3rem", textDecoration: "underline" }}>{locationMax}</p>
+                                            <p style={{ margin: "0", fontSize: "1.3rem", textDecoration: "underline" }}>{locationMax + 1}</p>
                                             <p style={{ margin: "0", fontSize: "1.3rem" }}>）</p>
                                         </Stack>
                                         : <></>
@@ -405,26 +414,26 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
                             <Stack direction="horizontal" gap={2} style={{ marginTop: "1rem" }}>
                                 <p style={{ margin: "0", fontSize: "1.3rem" }}>國家：</p>
                                 <Form.Group>
-                                    <Form.Control placeholder="Country" name="country" className="contentCountry" />
+                                    <Form.Control disabled placeholder="Country" name="country" className="contentCountry" />
                                 </Form.Group>
                                 <p style={{ fontSize: "1.5rem", margin: "0 0 0 1rem" }}>城市：</p>
                                 <Form.Group>
-                                    <Form.Control placeholder="City" name="city" className="contentCity" />
+                                    <Form.Control disabled placeholder="City" name="city" className="contentCity" />
                                 </Form.Group>
                                 <p style={{ fontSize: "1.5rem", margin: "0 0 0 1rem" }}>街道：</p>
                                 <Form.Group>
-                                    <Form.Control placeholder="Street" name="street" className="contentStreet" />
+                                    <Form.Control disabled placeholder="Street" name="street" className="contentStreet" />
                                 </Form.Group>
                             </Stack>
                             <Stack direction="horizontal" gap={2} style={{ marginTop: "1rem" }}>
                                 <p style={{ margin: "0", fontSize: "1.3rem", width: "7rem" }}>建築名稱：</p>
-                                <Form.Control placeholder="Building" name="building" style={{ width: "10rem", maxWidth: "100%" }} className="contentBuilding"></Form.Control>
+                                <Form.Control disabled placeholder="Building" name="building" style={{ width: "10rem", maxWidth: "100%" }} className="contentBuilding"></Form.Control>
                             </Stack>
                             <p style={{ margin: "1rem 0 0 0", fontSize: "1.3rem" }}>事件：</p>
                             <Stack direction="horizontal" gap={2} style={{ marginTop: "1rem" }}>
                                 <p style={{ margin: "0", fontSize: "1.3rem" }}>事件名稱：</p>
                                 <Form.Group>
-                                    <Form.Control placeholder="Event_name" name="eventName" className="contentEventName" />
+                                    <Form.Control placeholder="Event_name" name="eventName" className="contentEventName" disabled />
                                 </Form.Group>
                                 <p style={{ fontSize: "1.5rem", margin: "0 0 0 1rem" }}>事件種類代號：</p>
                                 <Form.Group>

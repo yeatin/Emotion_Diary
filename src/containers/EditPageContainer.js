@@ -119,9 +119,17 @@ const EditPageContainer = () => {
         //call db to get datas
     }, [])
 
+    useEffect(() => {
+        let max = -1;
+        locations.forEach((location) => max = location.locationId > max ? location.locationId : max);
+        if (max >= 0) {
+            setLocationMax(max);
+        }
+    }, [locations])
+
     return (
         <div>
-            <EditButtons datas={datas} chosenData={chosenData} types={types} setViewMode={setViewMode} setKeywordDatas={setKeywordDatas}  />
+            <EditButtons datas={datas} chosenData={chosenData} types={types} setViewMode={setViewMode} setKeywordDatas={setKeywordDatas} />
             <EditTable datas={datas} setDatas={setDatas} chosenData={chosenData} setChosenData={setChosenData} locations={locations} setLocations={setLocations} types={types} setTypes={setTypes} locationMax={locationMax} setLocationMax={setLocationMax} viewMode={viewMode} keywordDatas={keywordDatas} />
         </div>
     )
