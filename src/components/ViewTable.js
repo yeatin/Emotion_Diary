@@ -63,82 +63,84 @@ const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosen
     }
 
     return (
-        <div style={{ position: "relative", overflowY: "auto", height: "40rem" }}>
-            <Table striped bordered hover responsive variant='blue'
-                style={{ margin: "5rem auto 0 auto", width: "90%", backgroundColor: "#B9D8F5" }}>
-                <thead style={{ backgroundColor: "#1F66AB", color: "#fff", borderBottom: "solid 3px #fff" }}>
-                    <tr style={{ fontSize: "1.5rem" }}>
-                        <th>活動名稱（Event_name）</th>
-                        <th>年_月_日（Year_Month_Day）</th>
-                        <th>地點代號（Location_id）</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        viewMode === "keyword" ?
-                            keywordDatas.map((data, index) => {
-                                if (data)
-                                    return (
-                                        <tr
-                                            key={index}
-                                            id={index}
-                                            style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
-                                            onClick={() => handleContent(data)}>
-                                            <td>{data.eventName}</td>
-                                            <td>{data.yearMonthDay}</td>
-                                            <td>{data.locationId}</td>
-                                        </tr>
-                                    )
-                                return null;
-                            })
-                            :
-                            datas.map((data, index) => {
-                                if (viewMode === "time") {
-                                    return timeRange[0] <= data.yearMonthDay && data.yearMonthDay <= timeRange[1] ? (
-                                        <tr
-                                            key={`row${index}`}
-                                            id={`row${index}`}
-                                            style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
-                                            onClick={() => handleContent(data)}>
-                                            <td>{data.eventName}</td>
-                                            <td>{data.yearMonthDay}</td>
-                                            <td>{data.locationId}</td>
-                                        </tr>
-                                    )
-                                        : null;
-                                }
-                                else if (viewMode === "type") {
-                                    return data.typeId === chosenType ? (
-                                        <tr
-                                            key={`row${index}`}
-                                            id={`row${index}`}
-                                            style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
-                                            onClick={() => handleContent(data)}>
-                                            <td>{data.eventName}</td>
-                                            <td>{data.yearMonthDay}</td>
-                                            <td>{data.locationId}</td>
-                                        </tr>
-                                    )
-                                        : null;
-                                }
-                                else {
-                                    return (
-                                        <tr
-                                            key={index}
-                                            id={index}
-                                            style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
-                                            onClick={() => handleContent(data)}>
-                                            <td>{data.eventName}</td>
-                                            <td>{data.yearMonthDay}</td>
-                                            <td>{data.locationId}</td>
-                                        </tr>
-                                    )
-                                }
-                            })}
-                </tbody>
-            </Table>
+        <div>
+            <div style={{ position: "relative", overflowY: "auto", height: "25rem", marginTop: "3rem" }}>
+                <Table striped bordered hover responsive variant='blue'
+                    style={{ margin: "0 auto", width: "90%", backgroundColor: "#B9D8F5" }}>
+                    <thead style={{ backgroundColor: "#1F66AB", color: "#fff", borderBottom: "solid 3px #fff" }}>
+                        <tr style={{ fontSize: "1.5rem" }}>
+                            <th>活動名稱（Event_name）</th>
+                            <th>年_月_日（Year_Month_Day）</th>
+                            <th>地點代號（Location_id）</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            viewMode === "keyword" ?
+                                keywordDatas.map((data, index) => {
+                                    if (data)
+                                        return (
+                                            <tr
+                                                key={index}
+                                                id={index}
+                                                style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
+                                                onClick={() => handleContent(data)}>
+                                                <td>{data.eventName}</td>
+                                                <td>{data.yearMonthDay}</td>
+                                                <td>{data.locationId}</td>
+                                            </tr>
+                                        )
+                                    return null;
+                                })
+                                :
+                                datas.map((data, index) => {
+                                    if (viewMode === "time") {
+                                        return timeRange[0] <= data.yearMonthDay && data.yearMonthDay <= timeRange[1] ? (
+                                            <tr
+                                                key={`row${index}`}
+                                                id={`row${index}`}
+                                                style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
+                                                onClick={() => handleContent(data)}>
+                                                <td>{data.eventName}</td>
+                                                <td>{data.yearMonthDay}</td>
+                                                <td>{data.locationId}</td>
+                                            </tr>
+                                        )
+                                            : null;
+                                    }
+                                    else if (viewMode === "type") {
+                                        return data.typeId === chosenType ? (
+                                            <tr
+                                                key={`row${index}`}
+                                                id={`row${index}`}
+                                                style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
+                                                onClick={() => handleContent(data)}>
+                                                <td>{data.eventName}</td>
+                                                <td>{data.yearMonthDay}</td>
+                                                <td>{data.locationId}</td>
+                                            </tr>
+                                        )
+                                            : null;
+                                    }
+                                    else {
+                                        return (
+                                            <tr
+                                                key={index}
+                                                id={index}
+                                                style={{ fontSize: "1.4rem", fontWeight: "900", cursor: "pointer" }}
+                                                onClick={() => handleContent(data)}>
+                                                <td>{data.eventName}</td>
+                                                <td>{data.yearMonthDay}</td>
+                                                <td>{data.locationId}</td>
+                                            </tr>
+                                        )
+                                    }
+                                })}
+                    </tbody>
+                </Table>
+            </div>
             <div className="contentContainer smallWindow" id="contentContainer"
-                style={{ position: "absolute", top: "3rem", left: "15rem", padding: "2rem 4rem", backgroundColor: "#A9BDDD", border: "solid 2px #5271A1", display: "none" }}
+                style={{ position: "absolute", top: "5rem", left: "15rem", padding: "2rem 4rem", backgroundColor: "#A9BDDD", border: "solid 2px #5271A1", display: "none" }}
             >
                 <p
                     className="closeContent"

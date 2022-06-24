@@ -66,13 +66,38 @@ const ViewContainer = () => {
             building: ""
         }
     ];
-    const [datas, setDatas] = useState(initialDatas);
+    const [datas, setDatas] = useState([]);
     const [chosenData, setChosenData] = useState({});
     const [cost, setCost] = useState(null);
     const [keywordDatas, setKeywordDatas] = useState([]);
 
+    const fetchDatas = async () => {
+        try {
+            const data = await fetch("http://localhost:5000/view");
+            const json = await data.json();
+            json.forEach(data => {
+                for (let oldKey in data) {
+                    let temp;
+                    temp = oldKey.split("_");
+                    let newKey = temp[0].toLocaleLowerCase();
+                    temp.forEach((word, index) => {
+                        if(index > 0){
+                            word = word[0].toUpperCase() + word.slice(1);
+                            newKey += word;
+                        }
+                    });
+                    data[newKey] = data[oldKey];
+                }
+            })
+            setDatas(json);
+        }
+        catch (err) {
+            console.log("err in fetching datas", err);
+        }
+    }
+
     useEffect(() => {
-        //call db to get datas
+        fetchDatas();
     }, [])
 
     return (
