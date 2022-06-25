@@ -108,7 +108,7 @@ const EditPageContainer = () => {
         typeName: "food"
     }]
     const [viewMode, setViewMode] = useState("normal");
-    const [datas, setDatas] = useState(initialDatas);
+    const [datas, setDatas] = useState([]);
     const [chosenData, setChosenData] = useState({});
     const [locations, setLocations] = useState([]);
     const [types, setTypes] = useState([]);
