@@ -34,7 +34,7 @@ const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosen
         const contentStreet = document.querySelector(".contentStreet");
         const contentBuilding = document.querySelector(".contentBuilding");
         const contentEventName = document.querySelector(".contentEventName");
-        const contentTypeId = document.querySelector(".contentTypeId");
+        const contentTypeName = document.querySelector(".contentTypeName");
         const contentCost = document.querySelector(".contentCost");
         const contentMood = document.querySelector(".contentMood");
         const contentStartTime = document.querySelector(".contentStartTime");
@@ -52,7 +52,7 @@ const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosen
         contentStreet.value = data.street;
         contentBuilding.value = data.building;
         contentEventName.value = data.eventName;
-        contentTypeId.value = data.typeId;
+        contentTypeName.value = data.typeName;
         contentCost.value = data.cost.toString();
         contentMood.value = data.mood;
         contentStartTime.value = data.startTime;
@@ -64,7 +64,7 @@ const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosen
 
     return (
         <div>
-            <div style={{ position: "relative", overflowY: "auto", height: "25rem", marginTop: "3rem" }}>
+            <div style={{ position: "relative", overflowY: "auto", height: "35rem", marginTop: "3rem" }}>
                 <Table striped bordered hover responsive variant='blue'
                     style={{ margin: "0 auto", width: "90%", backgroundColor: "#B9D8F5" }}>
                     <thead style={{ backgroundColor: "#1F66AB", color: "#fff", borderBottom: "solid 3px #fff" }}>
@@ -109,7 +109,7 @@ const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosen
                                             : null;
                                     }
                                     else if (viewMode === "type") {
-                                        return data.typeId === chosenType ? (
+                                        return data.typeName === chosenType ? (
                                             <tr
                                                 key={`row${index}`}
                                                 id={`row${index}`}
@@ -191,9 +191,9 @@ const ViewTable = ({ datas, setDatas, viewMode, timeRange, chosenData, setChosen
                                 <Form.Group>
                                     <Form.Control className="contentEventName" />
                                 </Form.Group>
-                                <p style={{ fontSize: "1.5rem", margin: "0 0 0 1rem" }}>事件種類代號：</p>
+                                <p style={{ fontSize: "1.5rem", margin: "0 0 0 1rem" }}>事件種類：</p>
                                 <Form.Group>
-                                    <Form.Control className="contentTypeId" />
+                                    <Form.Control className="contentTypeName" />
                                 </Form.Group>
                                 <p style={{ fontSize: "1.5rem", margin: "0 0 0 1rem" }}>花費：</p>
                                 <Form.Group>

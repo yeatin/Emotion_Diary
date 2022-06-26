@@ -5,7 +5,7 @@ import Alert from "react-bootstrap/Alert";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
 
-const EditButtons = ({ datas, chosenData, types, setViewMode, setKeywordDatas }) => {
+const EditButtons = ({ datas, chosenData, types, setViewMode, setKeywordDatas, fetchCopy, setLocationMax, locations, fetchNewType, fetchDeleteData, fetchDeleteType }) => {
     const navigate = useNavigate();
 
     const toggleWindow = (id) => {
@@ -64,6 +64,15 @@ const EditButtons = ({ datas, chosenData, types, setViewMode, setKeywordDatas })
         addContent.mood.value = "";
         addContent.startTime.value = "";
         addContent.endTime.value = "";
+        addContent.country.disabled = false;
+        addContent.city.disabled = false;
+        addContent.street.disabled = false;
+        addContent.building.disabled = false;
+        let max = -1;
+        locations.forEach((location) => max = location.locationId > max ? location.locationId : max);
+        if (max >= 0) {
+            setLocationMax(max);
+        }
         toggleWindow("addContentContainer");
     }
     /*
@@ -76,14 +85,17 @@ const EditButtons = ({ datas, chosenData, types, setViewMode, setKeywordDatas })
     */
 
     const copyData = (data) => {
-        //call db;
+        fetchCopy(data);
     }
 
     const deleteData = (data) => {
-        //call db;
+        fetchDeleteData(data);
     }
 
     const handleType = () => {
+        const typeForm = document.forms["typeForm"].elements;
+        typeForm.addTypeId.value = "";
+        typeForm.deleteTypeId.value = "無";
         toggleWindow("editType");
     }
 
@@ -91,17 +103,15 @@ const EditButtons = ({ datas, chosenData, types, setViewMode, setKeywordDatas })
         event.preventDefault();
         const typeForm = document.forms["typeForm"].elements;
         if (typeForm.addTypeId.value) {
-            //call db
-            //console.log("add=", typeForm.addTypeId.value);
+            fetchNewType(typeForm.addTypeId.value);
         }
         if (typeForm.deleteTypeId.value !== "無") {
-            //call db
+            fetchDeleteType(parseInt(typeForm.deleteTypeId.value));
             //console.log("delete=", typeForm.deleteTypeId.value);
         }
         typeForm.addTypeId.value = "";
-        typeForm.deleteTypeId.value = "";
-        const editType = document.querySelector("#editType");
-        editType.style.display = "none";
+        typeForm.deleteTypeId.value = "無";
+        toggleWindow("editType");
     }
 
     const handleViewKeyowrd = (event) => {

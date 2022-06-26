@@ -3,7 +3,7 @@ import Stack from "react-bootstrap/Stack";
 import Form from "react-bootstrap/Form";
 import Button from 'react-bootstrap/Button';
 
-const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setLocations, types, setTypes, locationMax, setLocationMax, viewMode, keywordDatas }) => {
+const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setLocations, types, setTypes, locationMax, setLocationMax, viewMode, keywordDatas, fetchRevise, fetchNew }) => {
 
     const handleSelect = (id, data) => {
         const selectedCircle = document.querySelector(`#${id}`);
@@ -53,7 +53,7 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
         updateContent.building.value = data.building;
         updateContent.eventName.value = data.eventName;
         updateContent.typeId.value = data.typeId;
-        updateContent.cost.value = data.cost.toString();
+        updateContent.cost.value = data.cost?.toString();
         updateContent.mood.value = data.mood;
         updateContent.startTime.value = data.startTime;
         updateContent.endTime.value = data.endTime;
@@ -115,46 +115,61 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
         else {
             elements = document.forms["updateContent"].elements;
         }
-        const newData = {
-            eventName: elements.eventName.value,
-            typeId: parseInt(elements.typeId.value),
-            yearMonthDay: elements.time0.value + elements.time1.value + elements.time2.value,
-            startTime: elements.startTime.value,
-            endTime: elements.endTime.value,
-            locationId: elements.typeId.value,
-            cost: parseInt(elements.cost.value),
-            mood: elements.mood.value,
-            country: elements.country.value,
-            city: elements.city.value,
-            street: elements.street.value,
-            building: elements.building.value
+        let newData = {
+            Event_name: elements.eventName.value,
+            Type_id: parseInt(elements.typeId.value),
+            Year: elements.time0.value,
+            Month: elements.time1.value,
+            Day: elements.time2.value,
+            Start_time: elements.startTime.value,
+            End_time: elements.endTime.value,
+            Location_id: elements.typeId.value,
+            Cost: parseInt(elements.cost.value) || 0,
+            Mood: elements.mood.value,
+            Country: elements.country.value,
+            City: elements.city.value,
+            Street: elements.street.value,
+            Building: elements.building.value
         };
-        const newDatas = [...datas]
-        newDatas.push(newData);
 
         if (event.target.id.includes("add")) {
-            setDatas(newDatas);
+            //setDatas(newDatas);
             //call db to insert data
-            toggleWindow("addContentContainer");
+            fetchNew(newData).then(
+                result => result ? toggleWindow("addContentContainer") : {}
+            )
         }
         else if (event.target.id.includes("update")) {
             //call db to update data
-            let oldData;
+            let oldData = {};
             datas.forEach((data) => {
                 if (data.eventName === elements.eventName.value && data.yearMonthDay === elements.time0.value + elements.time1.value + elements.time2.value) {
-                    oldData = data;
+                    oldData.O_event_name = data.eventName;
+                    oldData.O_type_id = data.typeId;
+                    oldData.O_year_month_day = data.yearMonthDay;
+                    oldData.O_start_time = data.startTime;
+                    oldData.O_end_time = data.endTime;
+                    oldData.O_location_id = data.locationId;
+                    oldData.O_cost = data.cost;
+                    oldData.O_mood = data.mood;
+                    oldData.O_country = data.country;
+                    oldData.O_city = data.city;
+                    oldData.O_street = data.street;
+                    oldData.O_building = data.building;
                     return;
                 }
             })
-            const result = { oldData: oldData, newData: newData };
-            toggleWindow("updateContentContainer");
+            newData = { ...newData, ...oldData };
+            fetchRevise(newData).then(
+                result => result ? toggleWindow("updateContentContainer") : {}
+            )
         }
 
     }
 
     return (
         <div>
-            <div style={{ position: "relative", overflowY: "auto", height: "25rem", marginTop: "3rem" }}>
+            <div style={{ position: "relative", overflowY: "auto", height: "35rem", marginTop: "3rem" }}>
                 <Table striped bordered hover responsive variant='blue'
                     style={{ margin: "0 auto", width: "90%", backgroundColor: "#B9D8F5" }}>
                     <thead style={{ backgroundColor: "#1F66AB", color: "#fff", borderBottom: "solid 3px #fff" }}>
