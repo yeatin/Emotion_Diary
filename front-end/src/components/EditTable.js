@@ -205,7 +205,7 @@ const EditTable = ({ datas, setDatas, chosenData, setChosenData, locations, setL
                                                 <td>{data.locationId}</td>
                                                 <td style={{ textAlign: "center" }}>
                                                     <p
-                                                        onClick={() => handleUpdate(data)}
+                                                        
                                                         style={{ textDecoration: "underline", cursor: "pointer" }}
                                                     >修改
                                                     </p>

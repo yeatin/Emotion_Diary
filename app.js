@@ -18,8 +18,8 @@ app.use(express.static(__dirname));
 const pool = mysql.createPool({
     connectionLimit: 10,
     host: 'localhost',
-    user: 'root',
-    password: '00000000',
+    user: 'team9',
+    password: 'TO5iVE',
     database: 'team9'
 });
 
@@ -31,7 +31,7 @@ app.get('/view', (req, res) => {
         connection.query('SELECT * FROM location NATURAL JOIN type NATURAL JOIN activity NATURAL JOIN event', (err, rows) => {
             connection.release()
             if (!err) {
-                res.json({status:"success", data: rows})
+                res.json({status:"success",data:rows})
             } else {
                 res.json({status:err})
             }
@@ -49,7 +49,7 @@ app.get('/location', (req, res) => {
         connection.query('SELECT * FROM location ',(err, rows) => { 
             connection.release()
             if (!err) {
-                res.json({status:"success", data: rows})
+                res.json({status:"success",data:rows})
             } else {
                 res.json({status:err})
             }
@@ -66,7 +66,7 @@ app.get('/type', (req, res) => {
         connection.query('SELECT * FROM type ',(err, rows) => { 
             connection.release()
             if (!err) {
-                res.json({status:"success", data: rows})
+                res.json({status:"success",data:rows})
             } else {
                 console.log(err)
                 res.json({status:err})
@@ -84,6 +84,7 @@ app.post('/new_type', (req, res) => {
         console.log(`connected as id ${ connection.threadId }`) //cmd 顯示 CONNECTION ID
         connection.query('SELECT max(Type_id)+1 as a FROM type',(err,type)=>{
             if (!err) {
+                res.json({status:"success1"})//回傳成功訊息
                 console.log("pass1") //cmd顯示成功訊息
                 const {Type_name}=req.body
                 connection.query('INSERT INTO type SET Type_id=?,Type_name=?',[type[0].a,Type_name],(err, rows) => { //mysql 程式碼
@@ -105,9 +106,9 @@ app.post('/new_type', (req, res) => {
 
 //事件寫入(V)
 app.post('/new_data', (req, res) => {
-    console.log("body=", req.body);
     //連接資料庫
     pool.getConnection((err, connection) => {
+        if (err) throw err
         console.log(`connected as id ${ connection.threadId }`) //cmd 顯示 CONNECTION ID
         const {Year,Month,Day,Location_id,Country,City,Street,Building,Event_name,Type_id,Cost,Mood,Start_time,End_time}=req.body
         if(req.body.Location_id=="新增"){
@@ -167,7 +168,6 @@ app.post('/new_data', (req, res) => {
 //修改資料(特殊字元卡住)
 app.put('/revise_data', (req, res) => {
     //連接資料庫
-    console.log("body=", req.body);
     pool.getConnection((err, connection) => {
         if (err) throw err
         console.log(`connected as id ${ connection.threadId }`) //cmd 顯示 CONNECTION ID
@@ -178,7 +178,6 @@ app.put('/revise_data', (req, res) => {
                     connection.query('INSERT INTO location SET Country=?,City=?,Street=?,Building=?,Location_id=?',[Country,City,Street,Building,location[0].a],(err, rows) => { //mysql 程式碼
                         if (!err) {
                             console.log('pass 1')
-                            res.json({status:"pass 1"})
                         } else {
                             console.log(err)
                             res.json({status:err})
@@ -187,7 +186,6 @@ app.put('/revise_data', (req, res) => {
                     connection.query('UPDATE activity SET Year_Month_Day=?,Location_id=? WHERE Event_name=? AND (Year_Month_Day=? AND Location_id=?)',[req.body.Year*10000+req.body.Month*100+req.body.Day,location[0].a],Event_name,O_year_month_day,O_location_id,(err, rows) => { //mysql 程式碼
                         if (!err) {
                             console.log('pass 2')
-                            res.json({status:"pass 2"})
                         } else {
                             console.log(err)
                             res.json({status:err})
@@ -209,42 +207,39 @@ app.put('/revise_data', (req, res) => {
             })
         }
         else{
-            /*connection.query('UPDATE activity SET Year_Month_Day=?,Location_id=? WHERE Year_Month_Day=? AND Location_id=? AND Event_name=?',req.body.Year*10000+req.body.Month*100+req.body.Day,Location_id,O_year_month_day,O_location_id,Event_name,(err, rows) => { //mysql 程式碼
-                console.log(rows[0])
+            connection.query('INSERT INTO temp (SELECT * FROM activity WHERE Event_name=?) FROM activity',Event_name,(err, rows) => { //mysql 程式碼
                 if (!err) {
                     console.log('pass 3')
-                    res.json({status:"pass 3"})
-                } else {
-                    console.log(err)
-                    res.json({status:err})
-                }
-            })*/
-            connection.query('DELETE from activity WHERE Event_name=? AND Year_Month_Day=? AND Location_id=?',Event_name,O_year_month_day,O_location_id,(err, rows) => { //mysql 程式碼
-                if (!err) {
-                    console.log('pass 3')
-                    res.json({status:"pass 3"})
+                    connection.query('SELECT * INTO temp1 FROM temp WHERE Location_id=? ',O_location_id,(err, rows1) => { //mysql 程式碼
+                        if (!err) {
+                            console.log('pass 4')
+                            connection.query('SELECT * FROM temp1 WHERE Year_Month_Day=? ',O_year_month_day,(err, rows2) => { //mysql 程式碼
+                                console.log(rows2[0])
+                                if (!err) {
+                                    console.log('pass 5')
+                                } else {
+                                    console.log(err)
+                                    res.json({status:err})
+                                }
+                            })
+                        } else {
+                            console.log(err)
+                            res.json({status:err})
+                        }
+                    })
                 } else {
                     console.log(err)
                     res.json({status:err})
                 }
             })
-            /*connection.query('INSERT INTO activity SET Year_Month_Day=?,Location_id=?,Event_name=?',[req.body.Year*10000+req.body.Month*100+req.body.Day,Location_id,Event_name],(err, rows) => { //mysql 程式碼
-                if (!err) {
-                    console.log('pass 4')
-                    res.json({status:"pass 4"})
-                } else {
-                    console.log(err)
-                    res.json({status:err})
-                }
-            })*/
-            connection.query('UPDATE event SET Type_id=?,Cost=?,Mood=?,Start_time=?,End_time=? WHERE Even_name=?',[Type_id,Cost,Mood,Start_time,End_time, Event_name],(err, rows) => { //mysql 程式碼
+            /*connection.query('UPDATE event SET Type_id=?,Cost=?,Mood=?,Start_time=?,End_time=? WHERE Even_name=?',[Type_id,Cost,Mood,Start_time,End_time,Event_name],(err, rows2) => { //mysql 程式碼
                 if (!err) { 
                     res.json({status:`type with the record id: ${[req.body.Event_name]} has been added.`})//正確信息出現
                 } else {
                     console.log(err)
                     res.json({status:err})
                 }
-            })  
+            })*/ 
         }
     })
 })
